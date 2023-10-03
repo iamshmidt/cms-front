@@ -5,9 +5,12 @@ import toast from "react-hot-toast";
 
 interface CartStore {
     items: Product[];
+    wishlist: Product[];
     addItem: (data: Product) => void;
     removeItem: (id: string) => void;
     removeAll: () => void;
+    addToWishlist: (data: Product) => void;
+    removeFromWishlist: (id: string) => void;
 }
 
 // const useCart = create<CartStore>((set=>({
@@ -32,6 +35,7 @@ interface CartStore {
 
 const useCart = create(persist<CartStore>((set, get) => ({
     items: [],
+    wishlist: [],
     addItem: (data: Product) => {
         const currentItems = get().items;
         const existingItem = currentItems.find(item => item.id === data.id);
@@ -44,9 +48,26 @@ const useCart = create(persist<CartStore>((set, get) => ({
         toast.success("Item added to cart")
     },
 
+    addToWishlist: (data: Product) => {
+        const currentWishlist = get().wishlist;
+        const existingItem = currentWishlist.find(item => item.id === data.id);
+  
+        if (existingItem) {
+          return toast("Item already in wishlist");
+        }
+  
+        set({ wishlist: [...get().wishlist, data] });
+        toast.success("Item added to wishlist");
+      },
+
     removeItem:(id:string)=>{
         set({ items: [...get().items.filter(item => item.id !== id)] });
         toast.success("Item removed from the cart cart")
+    },
+
+    removeFromWishlist: (id: string) => {
+        set({ wishlist: [...get().wishlist.filter(item => item.id !== id)] });
+        toast.success("Item removed from the wishlist");
     },
 
     removeAll: () => set({ items: [] })
