@@ -11,6 +11,7 @@ interface CartStore {
     removeAll: () => void;
     addToWishlist: (data: Product) => void;
     removeFromWishlist: (id: string) => void;
+    updateAmount: (data: Product) => void;
 }
 
 // const useCart = create<CartStore>((set=>({
@@ -36,33 +37,93 @@ interface CartStore {
 const useCart = create(persist<CartStore>((set, get) => ({
     items: [],
     wishlist: [],
-    addItem: (data: Product) => {
+    updateAmount: (data: Product) => {
+        console.log('data!!!', data)
         const currentItems = get().items;
         const existingItem = currentItems.find(item => item.id === data.id);
-
+        console.log('currentItems', data.amount)
         if (existingItem) {
-            return toast("Item already in cart")
+            console.log('existingItem', existingItem)
+            if (existingItem.amount < data.quantity) {
+                existingItem.amount++;
+                set({ items: [...currentItems] });
+            } else {
+                console.log('data.quantity', existingItem.amount)
+                existingItem.amount = data.quantity;
+                set({ items: [...currentItems] });
+            }
+
+            // toast("Item quantity updated in cart");
+        } else {
+            data.amount = 1;  // Set initial quantity to 1 if item is new
+            set({ items: [...currentItems, data] });
+            // toast("Item added to cart");
+        }
+    },
+    addItem: (data: Product) => {
+        const currentItems = [...get().items];
+        const existingItemIndex = currentItems.findIndex(item => item.id === data.id);
+
+        if (existingItemIndex !== -1) {
+            const existingItem = currentItems[existingItemIndex];
+            console.log('currentItems[existingItemIndex]', currentItems[existingItemIndex])
+            //   data.amount ++; // Update the quantity of the existing item
+            console.log('data.amount', data.amount)
+            existingItem.amount = data.amount;
+            //   currentItems.push(data);
+            toast("Item quantity updated in cart");
+        } else {
+            //   data.amount = 1;  // Set initial quantity to 1 if item is new
+            currentItems.push(data);
+            toast("Item added to cart");
         }
 
-        set({ items: [...get().items, data] });
-        toast.success("Item added to cart")
+        set({ items: currentItems });
     },
+
+    // addItem: (data: Product) => {
+    //     const currentItems = get().items;
+    //     const existingItem = currentItems.find(item => item.id === data.id);
+
+    //     if (existingItem) {
+    //         // data.amount++; // Increment the quantity if item already exists
+    //         console.log('data.amount', data.amount)
+    //         console.log('existingItem', existingItem.amount)
+    //         data.amount += existingItem.amount;
+    //         console.log('new daaa', data.amount)
+    //         set({ items: [...currentItems] });
+    //         toast("Item quantity updated in cart");
+    //     } else {
+    //         // data.amount = 1;  // Set initial quantity to 1 if item is new
+    //         set({ items: [...currentItems, data] });
+    //         toast("Item added to cart");
+    //     }
+
+    //     // set({ items: [...get().items, data] });
+    //     // toast.success("Item added to cart")
+    // },
 
     addToWishlist: (data: Product) => {
         const currentWishlist = get().wishlist;
         const existingItem = currentWishlist.find(item => item.id === data.id);
-  
+
         if (existingItem) {
-          return toast("Item already in wishlist");
+            return toast("Item already in wishlist");
         }
-  
+
         set({ wishlist: [...get().wishlist, data] });
         toast.success("Item added to wishlist");
-      },
+    },
 
-    removeItem:(id:string)=>{
+    removeItem: (id: string) => {
         set({ items: [...get().items.filter(item => item.id !== id)] });
         toast.success("Item removed from the cart cart")
+        // const currentItems = get().items;
+        // const updatedItems = currentItems.map(item =>
+        //   item.id === id ? { ...item, amount: item.amount - 1 } : item
+        // );
+        // set({ items: updatedItems.filter(item => item.amount > 0) });
+        // toast("Item removed from cart");
     },
 
     removeFromWishlist: (id: string) => {
@@ -76,7 +137,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
 
 }), {
     name: "cart-storage",
-    storage: createJSONStorage(()=> localStorage)
+    storage: createJSONStorage(() => localStorage)
 }))
 
 
