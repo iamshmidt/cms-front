@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { X } from "lucide-react"
+import { ShoppingCart, X } from "lucide-react"
 import { Product } from "@/types";
 import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
+import Button from "@/components/ui/button";
 
 
 interface CartItemProps {
@@ -19,7 +20,12 @@ const CartItem: React.FC<CartItemProps> = ({
     const cart = useCart();
 
     const onRemove = () => {
-        cart.removeItem(data.id);
+        cart.removeFromWishlist(data.id);
+    }
+
+
+    const onAddToCart = () => {
+      cart.addItem(data);
     }
     
 
@@ -43,6 +49,12 @@ const CartItem: React.FC<CartItemProps> = ({
                     <p className="text-gray-500 ml-4 border-l border-gray-200 pl-4">{data.size.name}</p>
                 </div>
                 <Currency value={data.price}></Currency>
+            </div>
+                <div className="mt-10 flex items-center gap-x-3">
+                <Button  onClick={onAddToCart}  className="flex items-center gap-x-2">
+                    Add to cart
+                    <ShoppingCart size={20} className="ml-2" />
+                </Button>
             </div>
         </div>
     </li>);
