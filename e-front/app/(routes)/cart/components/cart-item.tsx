@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { X } from "lucide-react"
+import { Minus, Plus, X } from "lucide-react"
 import { Product } from "@/types";
 import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
+import Button from "@/components/ui/button";
+import { useState } from "react";
 
 
 interface CartItemProps {
@@ -17,11 +19,30 @@ const CartItem: React.FC<CartItemProps> = ({
 }) => {
 
     const cart = useCart();
-
+    const [amount, setAmount] = useState(1);
     const onRemove = () => {
         cart.removeItem(data.id);
     }
-    
+    const onAddToCart = () => {
+        // cart.addItem(data);
+        const productWithUpdatedQuantity = { ...data, amount };  
+        cart.addItem(productWithUpdatedQuantity); 
+
+    }
+
+    const addQ = () => {
+        setAmount(amount + 1);
+        const productWithUpdatedQuantity = { ...data, amount };  
+        cart.addItem(productWithUpdatedQuantity); 
+    }
+
+    const subtractQ = () => {
+        if (amount > 0) {
+            setAmount(amount - 1);
+            const productWithUpdatedQuantity = { ...data, amount };  
+            cart.addItem(productWithUpdatedQuantity)
+        }
+    }
 
     return (<li className="flex py-6 border-b">
         <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
@@ -43,6 +64,30 @@ const CartItem: React.FC<CartItemProps> = ({
                     <p className="text-gray-500 ml-4 border-l border-gray-200 pl-4">{data.size.name}</p>
                 </div>
                 <Currency value={data.price}></Currency>
+
+                <div className="mt-10 flex-column items-center gap-x-3">
+                {data.quantity == 0 ? <div className="text-red-500 mt-5 flex items-center gap-x-3">Out of stock</div> :
+                    <div className="flex gap-x-3 items-center">
+                        <Button onClick={subtractQ} disabled={amount == 1 ? true : false} className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded bg-transparent flex items-center gap-x-2">
+                            <Minus size={20} className="" />
+                        </Button><div className="">{amount}</div>
+                        <Button onClick={addQ} disabled={amount >= data.quantity ? true : false} className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded bg-transparent flex items-center gap-x-2 flex items-center gap-x-2">
+                            <Plus size={20}  />
+                        </Button></div>}
+                  
+                        <div className="text-red-500 mt-2 font-light text-xs ">
+                {data.quantity >= 3 || data.quantity === 0 ? null : (
+                    <div className="">
+                        {data.quantity === 1
+                            ? `Only ${data.quantity} item available at the moment`
+                            : `Only ${data.quantity} items available at the moment`}
+                    </div>
+                )}
+
+            </div>
+
+            </div>
+       
             </div>
         </div>
     </li>);

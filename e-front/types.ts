@@ -9,6 +9,7 @@ export interface Product {
     color: Color;
     images: Image[];
     amount: number;
+    liked: boolean;
   };
   
   export interface Image {

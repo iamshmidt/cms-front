@@ -14,7 +14,6 @@ interface InfoProps {
 const Info: React.FC<InfoProps> = ({
     data
 }) => {
-    console.log('data', data)
     const [amount, setAmount] = useState(1);
     const cart = useCart();
 
@@ -36,7 +35,6 @@ const Info: React.FC<InfoProps> = ({
         }
     }
 
-    console.log('data.quantity', data)
     return (
         <div>
             <h1 className="text-3xl font-bold text-gray-900">{data.name}</h1>
@@ -65,15 +63,12 @@ const Info: React.FC<InfoProps> = ({
             <div className="mt-10 flex items-center gap-x-3">
                 {data.quantity == 0 ? <div className="text-red-500 mt-5 flex items-center gap-x-3">Out of stock</div> :
                     <>
-                        <Button onClick={subtractQ} disabled={amount == 1 ? true : false} className="flex items-center gap-x-2">
-                            <Minus size={20} className="ml-2" />
+                        <Button onClick={subtractQ} disabled={amount == 1 ? true : false} className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded flex  gap-x-2">
+                            <Minus size={20} className="" />
                         </Button><div className="">{amount}</div>
-                        <Button onClick={addQ} disabled={amount >= data.quantity ? true : false} className="flex items-center gap-x-2">
-                            <Plus size={20} className="ml-2" />
+                        <Button onClick={addQ} disabled={amount >= data.quantity ? true : false} className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded flex items-center  gap-x-2">
+                            <Plus size={20}  />
                         </Button></>}
-
-
-
             </div>
             <div className="text-red-500 mt-2 font-light text-s ">
                 {data.quantity >= 3 || data.quantity === 0 ? null : (

@@ -5,9 +5,11 @@ import IconButton from "./icon-button";
 import { Expand, Heart, ShoppingCart } from "lucide-react";
 import Currency from "./currency";
 import { useRouter } from "next/navigation";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import usePreviewModal from "@/hooks/use-preview-modal";
 import useCart from "@/hooks/use-cart";
+import BadgeAlert from "../badge-alert";
+
 
 interface ProductCard {
     data: Product;
@@ -20,39 +22,51 @@ const ProductCard: React.FC<ProductCard> = ({
 
     const cart = useCart();
     const wishlist = useCart();
-    
-    const handleClick = () => { 
+
+    const [heartColor, setHeartColor] = useState('#fff');
+
+    useEffect(() => {
+        setHeartColor(wishlist.isItemInWishlist(data) ? '#ef4444' : '#fff');
+    }, [data, wishlist]);
+
+    const handleClick = () => {
         router.push(`/product/${data?.id}`)
     }
 
-    const onPreview:MouseEventHandler<HTMLButtonElement> = (event) => {
-            event.stopPropagation();
-
-            previewModal.onOpen(data);
+    const onPreview: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.stopPropagation();
+        previewModal.onOpen(data);
     }
 
-    const onAddToCart:MouseEventHandler<HTMLButtonElement> = (event) => {
-            event.stopPropagation();
-
-            cart.addItem(data);
+    const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.stopPropagation();
+        cart.addItem(data);
     }
 
-    const onLike:MouseEventHandler<HTMLButtonElement> = (event) => {
+    const onLike: MouseEventHandler<HTMLButtonElement> = (event) => {
         event.stopPropagation();
         wishlist.addToWishlist(data);
+        if (wishlist.isItemInWishlist(data)) {
+            setHeartColor('#ef4444')
+        } else {
+            setHeartColor('#fff')
+        }
+
     }
+
+    // fill={`${wishlist.isItemInWishlist(data)}` ? "#ef4444" : "gray"} 
 
     return (
         <div onClick={handleClick} className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4">
             <div className="aspect-square rounded-xl bg-gray-100 relative">
                 <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image>
                 <div className="absolute w-full px-6 top-5">
-                <div className="flex gap-x-6 justify-end">
-                <IconButton
+                    <div className="flex gap-x-6 justify-end">
+                        <IconButton
                             onClick={onLike}
-                            icon={<Heart size={20} className="text-gray-600" />}
+                            icon={<Heart size={20} fill={heartColor} />}
                         />
-                        </div>
+                    </div>
                 </div>
                 <div className="lg:opacity-0 sm:opacity-1 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
                     <div className="flex gap-x-6 justify-center">
@@ -60,10 +74,11 @@ const ProductCard: React.FC<ProductCard> = ({
                             onClick={onPreview}
                             icon={<Expand size={20} className="text-gray-600" />}
                         />
-                        <IconButton
+                        {data.quantity > 0 ? <IconButton
                             onClick={onAddToCart}
                             icon={<ShoppingCart size={20} className="text-gray-600" />}
-                        />
+                        /> : null}
+
                     </div>
                 </div>
             </div>
@@ -79,6 +94,8 @@ const ProductCard: React.FC<ProductCard> = ({
             {/* Price */}
             <div className="flex items-center justify-between">
                 <Currency value={data?.price} />
+                {data.quantity === 0 ? <BadgeAlert title="Out of stock" description="Out of stock" variant="outOfStock"></BadgeAlert> : null}
+
             </div>
         </div>
     );

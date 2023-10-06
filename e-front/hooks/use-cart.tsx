@@ -11,6 +11,7 @@ interface CartStore {
     removeAll: () => void;
     addToWishlist: (data: Product) => void;
     removeFromWishlist: (id: string) => void;
+    isItemInWishlist: (data: Product) => boolean;
     updateAmount: (data: Product) => void;
 }
 
@@ -66,9 +67,6 @@ const useCart = create(persist<CartStore>((set, get) => ({
 
         if (existingItemIndex !== -1) {
             const existingItem = currentItems[existingItemIndex];
-            console.log('currentItems[existingItemIndex]', currentItems[existingItemIndex])
-            //   data.amount ++; // Update the quantity of the existing item
-            console.log('data.amount', data.amount)
             existingItem.amount = data.amount;
             //   currentItems.push(data);
             toast("Item quantity updated in cart");
@@ -105,14 +103,19 @@ const useCart = create(persist<CartStore>((set, get) => ({
 
     addToWishlist: (data: Product) => {
         const currentWishlist = get().wishlist;
-        const existingItem = currentWishlist.find(item => item.id === data.id);
-
-        if (existingItem) {
-            return toast("Item already in wishlist");
+        const existingItemIndex = currentWishlist.findIndex(item => item.id === data.id);
+      console.log('liked', data.id)
+      console.log('data', data)
+        if (existingItemIndex !== -1) {
+          // Item already exists in the wishlist, remove it
+          const updatedWishlist = currentWishlist.filter((item, index) => index !== existingItemIndex);
+          set({ wishlist: updatedWishlist });
+          toast("Item removed from wishlist");
+        } else {
+          // Item doesn't exist in the wishlist, add it
+          set({ wishlist: [...get().wishlist, data] });
+          toast.success("Item added to wishlist");
         }
-
-        set({ wishlist: [...get().wishlist, data] });
-        toast.success("Item added to wishlist");
     },
 
     removeItem: (id: string) => {
@@ -129,6 +132,11 @@ const useCart = create(persist<CartStore>((set, get) => ({
     removeFromWishlist: (id: string) => {
         set({ wishlist: [...get().wishlist.filter(item => item.id !== id)] });
         toast.success("Item removed from the wishlist");
+    },
+
+    isItemInWishlist:(data: Product): boolean => {
+        const currentWishlist = get().wishlist;
+        return currentWishlist.some(wishlistItem => wishlistItem.id === data.id);
     },
 
     removeAll: () => set({ items: [] })
