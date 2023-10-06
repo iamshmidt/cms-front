@@ -20,9 +20,7 @@ const Info: React.FC<InfoProps> = ({
 
     const onAddToCart = () => {
         // cart.addItem(data);
-        console.log('amount', amount)
         const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
-        console.log('productWithUpdatedQuantity', productWithUpdatedQuantity)
         cart.addItem(productWithUpdatedQuantity);  // Add the product to the cart with updated amount
         // cart.updateAmount(productWithUpdatedQuantity);
 
@@ -38,7 +36,7 @@ const Info: React.FC<InfoProps> = ({
         }
     }
 
-
+    console.log('data.quantity', data)
     return (
         <div>
             <h1 className="text-3xl font-bold text-gray-900">{data.name}</h1>
@@ -65,18 +63,20 @@ const Info: React.FC<InfoProps> = ({
             </div>
 
             <div className="mt-10 flex items-center gap-x-3">
-                {data.quantity == 0 ? <div className="text-red-500 mt-10 flex items-center gap-x-3">Out of stock</div> : null}
-                <Button onClick={subtractQ} disabled={amount == 1 ? true : false} className="flex items-center gap-x-2">
-                    <Minus size={20} className="ml-2" />
-                </Button>
-                <div className="">{amount}</div>
-                <Button onClick={addQ} disabled={amount >= data.quantity ? true : false} className="flex items-center gap-x-2">
-                    <Plus size={20} className="ml-2" />
-                </Button>
+                {data.quantity == 0 ? <div className="text-red-500 mt-5 flex items-center gap-x-3">Out of stock</div> :
+                    <>
+                        <Button onClick={subtractQ} disabled={amount == 1 ? true : false} className="flex items-center gap-x-2">
+                            <Minus size={20} className="ml-2" />
+                        </Button><div className="">{amount}</div>
+                        <Button onClick={addQ} disabled={amount >= data.quantity ? true : false} className="flex items-center gap-x-2">
+                            <Plus size={20} className="ml-2" />
+                        </Button></>}
+
+
 
             </div>
             <div className="text-red-500 mt-2 font-light text-s ">
-                {data.quantity >= 3 ? null : (
+                {data.quantity >= 3 || data.quantity === 0 ? null : (
                     <div className="">
                         {data.quantity === 1
                             ? `Only ${data.quantity} item available at the moment`
@@ -86,13 +86,12 @@ const Info: React.FC<InfoProps> = ({
 
             </div>
 
-
-            <div className="mt-10 flex items-center gap-x-3">
+            {data.quantity > 0 && <div className="mt-10 flex items-center gap-x-3">
                 <Button onClick={onAddToCart} className="flex items-center gap-x-2">
                     Add to category
                     <ShoppingCart size={20} className="ml-2" />
                 </Button>
-            </div>
+            </div>}
         </div>
     );
 }
