@@ -19,7 +19,7 @@ const NavbarActions = () => {
     if(!isMounted) return null;
 
     return ( 
-        <div className="ml-auto flex items-center gap-x-4">
+        <div className="lg:ml-auto sm:ml-unset flex items-center gap-x-4">
             <Button onClick={()=> router.push("/favorites")} className="flex items-center rounded-full bg-black px-4 py-2">
             <Heart size={20} color="white"></Heart>
             <span className="ml-2 text-sm font-medium text-white">
