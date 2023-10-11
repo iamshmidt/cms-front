@@ -31,7 +31,7 @@ const ProductList: React.FC<ProductListProps> = ({
                     prevEl: ".swiper-custom-prev"
                 }}
 
-                autoplay={true}
+                // autoplay={true}
 
                 onSlideChange={() => console.log('slide change')}
                 onSwiper={(swiper) => console.log(swiper)}
