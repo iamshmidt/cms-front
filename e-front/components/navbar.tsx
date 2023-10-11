@@ -6,38 +6,50 @@ import NavbarActions from "@/components/navbar-actions";
 import getCategories from "@/actions/get-categories";
 import MobileNav from "./mobile-nav";
 import Image from "next/image";
+import DesktopNav from "./desktop-nav";
 
 const Navbar = async () => {
   const categories = await getCategories();
 
-  return ( 
-    <div className="border-b">
-       
-      {/* <Container> */}
-      
-        <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
-         
-            <p className="font-bold text-xl">STORE
+  return (
+    <div className="border-b fixed top-0 h-16 w-full z-30 bg-zinc-50">
 
-            </p>
-            <div className="max-w-2">
-          <Link href="/" className="ml-4 flex lg:ml-0 gap-x-2">
-            <Image  fill src="/4.png" alt="" className="object-cover object-center"></Image>
+      {/* <Container> */}
+
+      <div className="shadow-md border-b  bg-zinc-50 relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between my-1">
+
+        <div className="max-w-sm  py-2">
+          <Link href="/" legacyBehavior>
+            <a className="flex justify-center items-center">
+              <Image src="/4.png" alt="Company Logo" width={80} height={80} className="object-cover object-center" />
+            </a>
           </Link>
+        </div>
+        {/* mobile menu */}
+        <div className="hidden lg:block w-full">
+          <div className="flex space-between w-full">
+          <DesktopNav data={categories} />
+          <NavbarActions />
           </div>
+        </div>
+
+        {/* desktop menu */}
+        <div className="lg:hidden">
           <MobileNav>
-          <MainNav data={categories} />
-          {/* <NavbarActions /> */}
+            <MainNav data={categories} />
           </MobileNav>
         </div>
-       
-        {/* Add mobile filter */}
-        {/* <MobileFilters sizes={sizes} colors={colors}></MobileFilters> */}
-       
-          {/* <MainNav data={categories} />
+
+
+      </div>
+
+      {/* Add mobile filter */}
+      {/* <MobileFilters sizes={sizes} colors={colors}></MobileFilters> */}
+
+      {/* <MainNav data={categories} />
           <NavbarActions /> */}
       {/* </Container> */}
-   
+
       {/* <Container>
         <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center">
           <Link href="/" className="ml-4 flex lg:ml-0 gap-x-2">
@@ -47,9 +59,9 @@ const Navbar = async () => {
           <NavbarActions />
         </div>
       </Container> */}
-      
+
     </div>
   );
 };
- 
+
 export default Navbar;
