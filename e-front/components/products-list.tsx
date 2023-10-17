@@ -30,7 +30,27 @@ const ProductList: React.FC<ProductListProps> = ({
                     nextEl: ".swiper-custom-next",
                     prevEl: ".swiper-custom-prev"
                 }}
-
+                breakpoints={{
+                    // when window width is <= 640px
+                    200:{
+                        slidesPerView: 1,
+                        spaceBetween: 10
+                      },
+                    420: {
+                      slidesPerView: 2,
+                      spaceBetween: 10
+                    },
+                    // when window width is <= 768px
+                    768: {
+                      slidesPerView: 3,
+                      spaceBetween: 10
+                    },
+                    // when window width is <= 1024px
+                    1024: {
+                      slidesPerView: 4,
+                      spaceBetween: 10
+                    },
+                }}
                 // autoplay={true}
 
                 onSlideChange={() => console.log('slide change')}

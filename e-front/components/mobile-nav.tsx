@@ -35,8 +35,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
                         <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-zinc-50 py-4 pb-6 shadow-xl">
                             {/* <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl"> */}
                             {/* Close Button */}
-                            <div className="flex items-center justify-between px-4">
-                                <NavbarActions />
+                            <div className="flex items-end justify-end px-4">
+                         
                                 <div><IconButton icon={<X size={20} />} onClick={onClose} className="ml-unset"></IconButton></div>
 
                             </div>

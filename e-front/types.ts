@@ -40,3 +40,18 @@ export interface Product {
     name: string;
     value: string;
   };
+
+  export interface Result {
+    id: string;
+    // category: Category;
+    name: string;
+    price: string;
+    quantity: number;
+    isFeatured: boolean;
+    // size: Size;
+    // color: Color;
+    images: Image[];
+    // amount: number;
+    // liked: boolean;
+    
+  }

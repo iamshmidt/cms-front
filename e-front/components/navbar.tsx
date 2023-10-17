@@ -7,10 +7,17 @@ import getCategories from "@/actions/get-categories";
 import MobileNav from "./mobile-nav";
 import Image from "next/image";
 import DesktopNav from "./desktop-nav";
+import { Search } from "lucide-react";
+import SearchCard from "@/components/ui/search-card";
+import getProducts from "@/actions/get-products";
+
 
 const Navbar = async () => {
   const categories = await getCategories();
+  const products = await getProducts({});
 
+  console.log(products, 'products')
+  
   return (
     <div className="border-b fixed top-0 h-16 w-full z-30 bg-zinc-50">
 
@@ -26,20 +33,25 @@ const Navbar = async () => {
           </Link>
         </div>
         {/* mobile menu */}
+
         <div className="hidden lg:block w-full">
-          <div className="flex space-between w-full">
-          <DesktopNav data={categories} />
-          <NavbarActions />
+          <div className="flex justify-between w-full">
+            <DesktopNav data={categories} />
+            <div className="flex">
+              <div className=""><SearchCard data={products}></SearchCard></div>
+              <NavbarActions />
+            </div>
           </div>
         </div>
 
+
         {/* desktop menu */}
-        <div className="lg:hidden">
+        <div className="lg:hidden flex ">
+          <NavbarActions />
           <MobileNav>
             <MainNav data={categories} />
           </MobileNav>
         </div>
-
 
       </div>
 
