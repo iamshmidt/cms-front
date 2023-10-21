@@ -3,6 +3,8 @@ export interface Product {
     category: Category;
     name: string;
     price: string;
+    discount: number;
+    priceAfterDiscount: string;
     quantity: number;
     isFeatured: boolean;
     size: Size;

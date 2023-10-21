@@ -19,7 +19,6 @@ const CartPage = () => {
 
     if(!isMounted) return null;
 
-    console.log('favorites', favorites)
 
     return ( 
         <div className="bg-white">

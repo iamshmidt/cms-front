@@ -8,11 +8,29 @@ import Button from "@/components/ui/button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import { toast } from "react-hot-toast";
+import getProducts from "@/actions/get-products";
 
 const Summary = () => {
   const searchParams = useSearchParams();
   const items = useCart((state) => state.items);
+  const updatePrices = useCart((state) => state.updatePrices);  
   const removeAll = useCart((state) => state.removeAll);
+
+
+  useEffect(() => {
+    const fetchAndUpdatePrices = async () => {
+      try {
+        const updatedProducts = await getProducts({});
+        updatePrices(updatedProducts);
+        console.log('Updated cart items:', updatedProducts)
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchAndUpdatePrices();
+  }, []);
+
 
   useEffect(() => {
     if (searchParams.get('success')) {
@@ -23,23 +41,22 @@ const Summary = () => {
     if (searchParams.get('canceled')) {
       toast.error('Something went wrong.');
     }
+    
   }, [searchParams, removeAll]);
 
-  // const totalPrice = items.reduce((total, item) => {
-  //   return total + Number(item.price)
-  // }, 0);
 
   const calculateCostPerItem = (quantity: number, price: number) => {
     return quantity * price;
-  };
+};
 
-  const totalPrice = () => {
+const totalPrice = () => {
     let totalCost = 0;
     items.forEach(item => {
-      totalCost += calculateCostPerItem(item.amount, Number(item.price));
+        const priceToUse = Number(item.priceAfterDiscount) !== 0 ? Number(item.priceAfterDiscount) : Number(item.price);
+        totalCost += calculateCostPerItem(item.amount, priceToUse);
     });
-    return totalCost; 
-  }
+    return totalCost;
+}
 
     const onCheckout = async () => {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {

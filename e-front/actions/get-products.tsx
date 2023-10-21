@@ -9,6 +9,8 @@ interface Query {
     sizeId?: string;
     isFeatured?: string;
     quantity?: number;
+    discount?: number;
+    priceWithDiscount?: string;
 }
 
 const getProducts = async(query: Query): Promise<Product[]> => {
@@ -19,12 +21,15 @@ const getProducts = async(query: Query): Promise<Product[]> => {
             sizeId: query.sizeId,
             categoryId: query.categoryId,
             isFeatured: query.isFeatured,
-            quantity: query.quantity
+            quantity: query.quantity,
+            discount: query.discount,
+            priceWithDiscount: query.priceWithDiscount,
         }
         
     })
     const response = await fetch(url);
     const data = await response.json();
+    console.log('data', data)
     return data;
 }
 
