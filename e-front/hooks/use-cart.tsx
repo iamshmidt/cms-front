@@ -31,17 +31,13 @@ const useCart = create(persist<CartStore>((set, get) => ({
     items: [],
     wishlist: [],
     updateAmount: (data: Product) => {
-        console.log('data!!!', data)
         const currentItems = get().items;
         const existingItem = currentItems.find(item => item.id === data.id);
-        console.log('currentItems', data.amount)
         if (existingItem) {
-            console.log('existingItem', existingItem)
             if (existingItem.amount < data.quantity) {
                 existingItem.amount++;
                 set({ items: [...currentItems] });
             } else {
-                console.log('data.quantity', existingItem.amount)
                 existingItem.amount = data.quantity;
                 set({ items: [...currentItems] });
             }
@@ -56,7 +52,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
 
     updatePrices: (updatedCartItems) => {
         set((state) => ({ ...state, items: updatedCartItems }));
-      },
+    },
 
     addItem: (data: Product) => {
         const currentItems = [...get().items];
@@ -80,8 +76,6 @@ const useCart = create(persist<CartStore>((set, get) => ({
     addToWishlist: (data: Product) => {
         const currentWishlist = get().wishlist;
         const existingItemIndex = currentWishlist.findIndex(item => item.id === data.id);
-      console.log('liked', data.id)
-      console.log('data', data)
         if (existingItemIndex !== -1) {
           // Item already exists in the wishlist, remove it
           const updatedWishlist = currentWishlist.filter((item, index) => index !== existingItemIndex);

@@ -25,7 +25,6 @@ const ProductCard: React.FC<ProductCard> = ({
     const wishlist = useCart();
 
     const [heartColor, setHeartColor] = useState('#fff');
-    console.log('data', data)
 
     useEffect(() => {
         setHeartColor(wishlist.isItemInWishlist(data) ? '#ef4444' : '#fff');

@@ -8,6 +8,7 @@ import Link from 'next/link'
 import Image from "next/image";
 import Currency from './currency'
 import BadgeAlert from '../badge-alert'
+// @ts-ignore
 import OutsideClickHandler from 'react-outside-click-handler';
 // import { CheckIcon, ChevronUpDownIcon } from '@'
 
@@ -27,7 +28,6 @@ interface SearchResult {
 const SearchCard: React.FC<SearchResult> = ({
     data
 }) => {
-    console.log('data', data)
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(data[0])
     const [query, setQuery] = useState('')
@@ -71,7 +71,7 @@ const SearchCard: React.FC<SearchResult> = ({
                             <div className={`transition duration-300  bg-none relative  cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm`}>
                                 <Combobox.Input
                                     className={`w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 focus:outline-none`}
-                                    displayValue={(person) => person.name}
+                                    displayValue={(person:unknown) => person?.name}
                                     onChange={(event) => setQuery(event.target.value)}
                                     onFocus={() => setQuery('')}
                                 />

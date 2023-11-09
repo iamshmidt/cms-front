@@ -21,7 +21,7 @@ const Summary = () => {
     const fetchAndUpdatePrices = async () => {
       try {
         const updatedProducts = await getProducts({});
-        updatePrices(updatedProducts);
+        // updatePrices(updatedProducts);
         console.log('Updated cart items:', updatedProducts)
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -59,10 +59,12 @@ const totalPrice = () => {
 }
 
     const onCheckout = async () => {
+      console.log('Checkout items:', items)
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
         products: items
         // productIds: items.map((item) => item.id)
       });
+      console.log('Checkout response:', response)
 
       window.location = response.data.url;
     }

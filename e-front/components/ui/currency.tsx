@@ -6,7 +6,7 @@ const formatter = new Intl.NumberFormat("en-US", { style: "currency", currency: 
 
 interface CurrencyProps {
     value?: string | number;
-    priceWithDiscount: string | number;
+    priceWithDiscount?: string | number;
 }
 
 const Currency: React.FC<CurrencyProps> = ({

@@ -21,7 +21,6 @@ const Info: React.FC<InfoProps> = ({
         // cart.addItem(data);
         const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
         cart.addItem(productWithUpdatedQuantity);  // Add the product to the cart with updated amount
-        // cart.updateAmount(productWithUpdatedQuantity);
 
     }
 
