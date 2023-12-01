@@ -81,6 +81,7 @@ const totalPrice = () => {
             <div className="text-base font-medium text-gray-900">Order total</div>
             <Currency value={totalPrice()} />
           </div>
+            <div className="text-gray-500 text-s">Tax is included</div>
         </div>
         <Button onClick={onCheckout} disabled={items.length === 0} className="w-full mt-6">
           Checkout

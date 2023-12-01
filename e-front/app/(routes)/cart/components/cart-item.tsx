@@ -19,7 +19,7 @@ const CartItem: React.FC<CartItemProps> = ({
 }) => {
 
     const cart = useCart();
-    const [amount, setAmount] = useState(1);
+    const [amount, setAmount] = useState(data.amount);
     const onRemove = () => {
         cart.removeItem(data.id);
     }
@@ -31,18 +31,21 @@ const CartItem: React.FC<CartItemProps> = ({
     }
 
     const addQ = () => {
-        setAmount(amount + 1);
-        const productWithUpdatedQuantity = { ...data, amount };  
+        const newAmount = amount + 1;
+        setAmount(newAmount);
+        const productWithUpdatedQuantity = { ...data, amount: newAmount };  
         cart.addItem(productWithUpdatedQuantity); 
     }
 
     const subtractQ = () => {
-        if (amount > 0) {
-            setAmount(amount - 1);
-            const productWithUpdatedQuantity = { ...data, amount };  
+        if (amount > 1) { // changed from 0 to 1, because you don't want to subtract when amount is already at its minimum (1)
+            const newAmount = amount - 1;
+            setAmount(newAmount);
+            const productWithUpdatedQuantity = { ...data, amount: newAmount };  
             cart.addItem(productWithUpdatedQuantity)
         }
     }
+console.log(amount)
 
     return (<li className="flex py-6 border-b">
         <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
