@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import CartItem from "./components/cart-item";
 import Summary from "./components/summary";
 import Info from "@/components/info";
+import { fetchAndUpdateProducts } from "@/hooks/update-products";
 
 const CartPage = () => {
 
@@ -15,11 +16,20 @@ const CartPage = () => {
 
     useEffect(() => {
         setIsMounted(true);
-    },[]);
 
-    if(!isMounted) return null;
+        const intervalId = setInterval(() => {
+            fetchAndUpdateProducts();
+        }, 60000); // Update every minute, adjust as needed
 
-    console.log('favorites', favorites)
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
+
+    // Ensure the component renders null on the server (for SSR)
+    if (!isMounted) return null;
+    
+
 
     return ( 
         <div className="bg-white">

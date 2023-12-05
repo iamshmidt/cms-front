@@ -21,7 +21,6 @@ const Info: React.FC<InfoProps> = ({
         // cart.addItem(data);
         const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
         cart.addItem(productWithUpdatedQuantity);  // Add the product to the cart with updated amount
-        // cart.updateAmount(productWithUpdatedQuantity);
 
     }
 
@@ -40,7 +39,7 @@ const Info: React.FC<InfoProps> = ({
             <h1 className="text-3xl font-bold text-gray-900">{data.name}</h1>
             <div className="mt-3 flex items-end justify-between">
                 <p className="text-2xl text-gray-900">
-                    <Currency value={data?.price}></Currency>
+                    <Currency value={data?.price} priceWithDiscount={data?.priceAfterDiscount}></Currency>
                 </p>
             </div>
             <hr className="my-4" />

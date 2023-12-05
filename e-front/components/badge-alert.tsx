@@ -10,15 +10,14 @@ interface ProductAlertProps {
 }
 
 const textMap: Record<ProductAlertProps["variant"], string> = {
-    sale: "Public",
+    sale: "Sale",
     outOfStock: "Out of stock",
 };
 
 const variantMap: Record<ProductAlertProps["variant"], BadgeProps["variant"]> = {
-    sale: "secondary",
+    sale: "green",
     outOfStock: "destructive",
 };
-
 const BadgeAlert:React.FC<ProductAlertProps> = ({
     title,
     description,

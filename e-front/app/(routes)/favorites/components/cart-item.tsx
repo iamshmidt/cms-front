@@ -41,7 +41,6 @@ const CartItem: React.FC<CartItemProps> = ({
         }
     }
 
-
     return (<li className="flex py-6 border-b">
         <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
             <Image fill src={data.images[0].url} alt="" className="object-cover object-center"></Image>
@@ -61,7 +60,7 @@ const CartItem: React.FC<CartItemProps> = ({
                     <p className="text-gray-300">{data.color.name}</p>
                     <p className="text-gray-500 ml-4 border-l border-gray-200 pl-4">{data.size.name}</p>
                 </div>
-                <Currency value={data.price}></Currency>
+                <Currency value={data.price}  priceWithDiscount={data?.priceAfterDiscount}></Currency>
             </div>
             <div className="mt-10 flex items-center gap-x-3">
                 {data.quantity == 0 ? <div className="text-red-500 mt-5 flex items-center gap-x-3">Out of stock</div> :

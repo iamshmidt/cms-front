@@ -16,7 +16,6 @@ const Navbar = async () => {
   const categories = await getCategories();
   const products = await getProducts({});
 
-  console.log(products, 'products')
   
   return (
     <div className="border-b fixed top-0 h-16 w-full z-30 bg-zinc-50">
