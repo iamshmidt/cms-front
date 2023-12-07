@@ -45,7 +45,6 @@ const CartItem: React.FC<CartItemProps> = ({
             cart.addItem(productWithUpdatedQuantity)
         }
     }
-console.log(amount)
 
     return (<li className="flex py-6 border-b">
         <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">

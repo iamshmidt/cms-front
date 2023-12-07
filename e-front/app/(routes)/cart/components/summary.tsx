@@ -59,7 +59,6 @@ const totalPrice = () => {
 }
 
     const onCheckout = async () => {
-      console.log('Checkout items:', items)
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
         products: items
         // productIds: items.map((item) => item.id)
