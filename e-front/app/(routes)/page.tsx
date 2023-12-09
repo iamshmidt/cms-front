@@ -4,17 +4,20 @@ import ProductList from "@/components/products-list";
 import Billboard from "@/components/ui/billboard";
 import Container from "@/components/ui/container";
 
-export const revalidate = 0;
 
+export const revalidate = 0;
+const billboard_id = process.env.OXXYKNITS;
 const HomePage = async() => {
-    const billboard = await getBillboard("e3ef3e5f-b4f9-4f50-b3d7-7d34773cc9d4");
+
+    const billboard = await getBillboard(billboard_id);
     const products = await getProducts({isFeatured: "true"});
+    const billboardData = billboard;
     return ( 
         <div>
        <Container>
         <div className="space-y-10 pb-10">
         <Billboard 
-          data={billboard}
+          data={billboardData}
         />
         
         <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8 relative">
