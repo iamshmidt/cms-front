@@ -17,9 +17,9 @@ const ProductPage:React.FC<ProductPageProps> = async({
     const product = await getProduct(params.productId);
 
     const suggestedProducts = await getProducts({ 
-      categoryId: product?.category.id
+      categoryId: '98641b24-cc85-45c9-a76f-146cbb1456f7'
     });
-  
+    //98641b24-cc85-45c9-a76f-146cbb1456f7
     if (!product) {
       return null;
     }

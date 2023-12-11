@@ -54,7 +54,6 @@ const ProductCard: React.FC<ProductCard> = ({
         }
 
     }
-
     // fill={`${wishlist.isItemInWishlist(data)}` ? "#ef4444" : "gray"} 
 
     return (
@@ -100,7 +99,7 @@ const ProductCard: React.FC<ProductCard> = ({
             <div className="flex items-center justify-between">
                 <Currency value={data?.price} priceWithDiscount={data?.priceAfterDiscount} />
                 {data.quantity === 0 ? <BadgeAlert title="Out of stock" description="Out of stock" variant="outOfStock"></BadgeAlert> : null}
-                {data.discount > 0 && data.quantity !== 0 ? <BadgeAlert title="Discount" description={`${data.discount}% off`} variant="sale"></BadgeAlert> : null}
+                {data.discount > 0 && data.quantity !== 0 && parseInt(data.price, 10) > data.discount ? <BadgeAlert title="Discount" description={`${data.discount}% off`} variant="sale"></BadgeAlert> : null}
             </div>
         </div>
     );

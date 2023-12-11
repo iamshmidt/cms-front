@@ -14,16 +14,14 @@ const Currency: React.FC<CurrencyProps> = ({
     priceWithDiscount,
 }) => {
     const [isMounted, setIsMounted] = useState(false);
-
     useEffect(() => {
         setIsMounted(true);
     }, [])
 
     if (!isMounted) return null;
 
-
     return (<div className="font-semibold">
-        {Number(priceWithDiscount) !== 0 && priceWithDiscount ? <div className="font-semibold">
+        {Number(priceWithDiscount) !== 0 && priceWithDiscount && value > priceWithDiscount ? <div className="font-semibold">
             <span className='line-through text-gray-400 pr-2'> {formatter.format(Number(value))}</span>
             {formatter.format(Number(priceWithDiscount))}
         </div> : <span>{formatter.format(Number(value))}</span>}

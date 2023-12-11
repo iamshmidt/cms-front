@@ -11,6 +11,7 @@ const HomePage = async() => {
 
     const billboard = await getBillboard(billboard_id);
     const products = await getProducts({isFeatured: "true"});
+    console.log(products)
     const billboardData = billboard;
     return ( 
         <div>
