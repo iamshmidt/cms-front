@@ -8,13 +8,16 @@ import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import Button from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import getProduct from "@/actions/get-product";
 
 
 interface CartItemProps {
     data: Product;
 }
-const CartItem: React.FC<CartItemProps> = ({
+
+
+const CartItem: React.FC<CartItemProps> =async ({
     data
 }) => {
 
@@ -23,7 +26,29 @@ const CartItem: React.FC<CartItemProps> = ({
     const onRemove = () => {
         cart.removeFromWishlist(data.id);
     }
+// console.log(data)
+    // const itemsId = cart.wishlist.map((item) => item.id)
+    // console.log(itemsId)
+    // console.log(itemsId)
+    // const product = await getProduct('39f1fb47-6bd6-4153-8229-122932f9dcd9');
+    const [product, setProduct] = useState(null);
 
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const fetchedProduct = await getProduct('39f1fb47-6bd6-4153-8229-122932f9dcd9');
+            // setProduct(fetchedProduct);
+            console.log(fetchedProduct)
+        };
+
+        fetchProduct();
+    }, []); 
+    // console.log(cart.wishlist)
+    // const onCheckout = async () => {
+    //     const response = await await getProduct(params.productId);
+
+    
+    //     // window.location = response.data.url;
+    //   }
 
     const onAddToCart = () => {
         //   cart.addItem(data);

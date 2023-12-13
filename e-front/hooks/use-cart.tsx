@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { Product } from "../types"
+import { ProductStorage } from "../types"
 import { createJSONStorage, persist } from "zustand/middleware";
 import toast from "react-hot-toast";
 import getProducts from "@/actions/get-products";
@@ -13,40 +13,40 @@ import getProducts from "@/actions/get-products";
 //     }
 //   };
 //   fetchAndUpdatePrices()
-const fetchAndUpdateProducts = async () => {
-    try {
-        const updatedProducts = await getProducts({}); // Fetch the latest products
-        // Get the current state from the store
-        const currentState = useCart.getState();
-        // Compare and update items
-        const updatedItems = currentState.items.map(item => {
-            const updatedProduct = updatedProducts.find(p => p.id === item.id);
-            return updatedProduct ? { ...item, ...updatedProduct } : item;
-        });
-        // Update the store
-        useCart.getState().updatePrices(updatedItems);
-    } catch (error) {
-        console.error("Error fetching products:", error);
-    }
-};
+// const fetchAndUpdateProducts = async () => {
+//     try {
+//         const updatedProducts = await getProducts({}); // Fetch the latest products
+//         // Get the current state from the store
+//         const currentState = useCart.getState();
+//         // Compare and update items
+//         const updatedItems = currentState.items.map(item => {
+//             const updatedProduct = updatedProducts.find(p => p.id === item.id);
+//             return updatedProduct ? { ...item, ...updatedProduct } : item;
+//         });
+//         // Update the store
+//         useCart.getState().updatePrices(updatedItems);
+//     } catch (error) {
+//         console.error("Error fetching products:", error);
+//     }
+// };
   
 interface CartStore {
-    items: Product[];
-    wishlist: Product[];
-    addItem: (data: Product) => void;
+    items: ProductStorage[];
+    wishlist: ProductStorage[];
+    addItem: (data: ProductStorage) => void;
     removeItem: (id: string) => void;
     removeAll: () => void;
-    addToWishlist: (data: Product) => void;
+    addToWishlist: (data: ProductStorage) => void;
     removeFromWishlist: (id: string) => void;
-    isItemInWishlist: (data: Product) => boolean;
-    updateAmount: (data: Product) => void;
-    updatePrices: (updatedProducts: Product[]) => void;
+    isItemInWishlist: (data: ProductStorage) => boolean;
+    updateAmount: (data: ProductStorage) => void;
+    updatePrices: (updatedProducts: ProductStorage[]) => void;
 }
 
 const useCart = create(persist<CartStore>((set, get) => ({
     items: [],
     wishlist: [],
-    updateAmount: (data: Product) => {
+    updateAmount: (data: ProductStorage) => {
         const currentItems = get().items;
         const existingItem = currentItems.find(item => item.id === data.id);
         if (existingItem) {
@@ -70,7 +70,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
         set((state) => ({ ...state, items: updatedCartItems }));
     },
 
-    addItem: (data: Product) => {
+    addItem: (data: ProductStorage) => {
         const currentItems = [...get().items];
         const existingItemIndex = currentItems.findIndex(item => item.id === data.id);
 
@@ -89,7 +89,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
     },
 
 
-    addToWishlist: (data: Product) => {
+    addToWishlist: (data: ProductStorage) => {
         const currentWishlist = get().wishlist;
         const existingItemIndex = currentWishlist.findIndex(item => item.id === data.id);
         if (existingItemIndex !== -1) {
@@ -114,7 +114,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
         toast.success("Item removed from the wishlist");
     },
 
-    isItemInWishlist:(data: Product): boolean => {
+    isItemInWishlist:(data: ProductStorage): boolean => {
         const currentWishlist = get().wishlist;
         return currentWishlist.some(wishlistItem => wishlistItem.id === data.id);
     },

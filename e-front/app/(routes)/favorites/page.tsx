@@ -7,6 +7,7 @@ import CartItem from "./components/cart-item";
 import Summary from "./components/summary";
 import Info from "@/components/info";
 import { fetchAndUpdateProducts } from "@/hooks/update-products";
+import StorageItems from "./components/storage-items";
 
 const CartPage = () => {
 
@@ -17,19 +18,19 @@ const CartPage = () => {
     useEffect(() => {
         setIsMounted(true);
 
-        const intervalId = setInterval(() => {
-            fetchAndUpdateProducts();
-        }, 60000); // Update every minute, adjust as needed
+        // const intervalId = setInterval(() => {
+        //     fetchAndUpdateProducts();
+        // }, 60000); // Update every minute, adjust as needed
 
-        return () => {
-            clearInterval(intervalId);
-        };
+        // return () => {
+        //     clearInterval(intervalId);
+        // };
     }, []);
 
     // Ensure the component renders null on the server (for SSR)
     if (!isMounted) return null;
     
-
+// console.log(favorites.wishlist)
 
     return ( 
         <div className="bg-white">
@@ -38,12 +39,19 @@ const CartPage = () => {
                 <h1 className="text-3xl font-bold text-black">Shopping Cart</h1>
                 <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start gap-x-12">
                     <div className="lg:col-span-7">
-                        {favorites.wishlist.length === 0 && <p className="text-neutral-500">Wishlist is empty</p>}
+                    {favorites.wishlist.length === 0 && <p className="text-neutral-500">Wishlist is empty</p>}
+                    <ul>
+                            {favorites.wishlist.map((item) => (
+                                // <CartItem key={item.id} data={item}></CartItem>
+                                <StorageItems key={item.id} data={item}></StorageItems>
+                            ))}
+                        </ul>
+                        {/* {favorites.wishlist.length === 0 && <p className="text-neutral-500">Wishlist is empty</p>}
                         <ul>
                             {favorites.wishlist.map((item) => (
                                 <CartItem key={item.id} data={item}></CartItem>
                             ))}
-                        </ul>
+                        </ul> */}
                     </div>
 
                     {/* <Summary></Summary> */}

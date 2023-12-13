@@ -1,5 +1,5 @@
 "use client"
-import { Product } from "@/types";
+import { Product, ProductStorage } from "@/types";
 import Image from "next/image";
 import IconButton from "./icon-button";
 import { Expand, Heart, ShoppingCart } from "lucide-react";
@@ -18,6 +18,7 @@ interface ProductCard {
 const ProductCard: React.FC<ProductCard> = ({
     data
 }) => {
+
     const previewModal = usePreviewModal();
     const router = useRouter();
 
@@ -25,6 +26,14 @@ const ProductCard: React.FC<ProductCard> = ({
     const wishlist = useCart();
 
     const [heartColor, setHeartColor] = useState('#fff');
+
+    const newStorageItem: ProductStorage = {
+        id: data.id,
+        amount: data.amount,
+        quantity: data.quantity
+    };
+
+    // const storageData:ProductStorage[] = 
 
     useEffect(() => {
         setHeartColor(wishlist.isItemInWishlist(data) ? '#ef4444' : '#fff');
@@ -46,8 +55,10 @@ const ProductCard: React.FC<ProductCard> = ({
 
     const onLike: MouseEventHandler<HTMLButtonElement> = (event) => {
         event.stopPropagation();
-        wishlist.addToWishlist(data);
-        if (wishlist.isItemInWishlist(data)) {
+      
+
+        wishlist.addToWishlist(newStorageItem);
+        if (wishlist.isItemInWishlist(newStorageItem)) {
             setHeartColor('#ef4444')
         } else {
             setHeartColor('#fff')

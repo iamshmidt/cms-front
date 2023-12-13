@@ -8,7 +8,7 @@ import Button from "@/components/ui/button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import { toast } from "react-hot-toast";
-
+export const revalidate = 0;
 const Summary = () => {
   const searchParams = useSearchParams();
   const items = useCart((state) => state.items);
@@ -37,6 +37,9 @@ const Summary = () => {
 
     window.location = response.data.url;
   }
+
+  console.log(items.map((item) => item.id))
+  console.log('hello')
   // priceWithDiscount={data?.priceAfterDiscount}
   return ( 
     <div
