@@ -29,8 +29,7 @@ const ProductCard: React.FC<ProductCard> = ({
 
     const newStorageItem: ProductStorage = {
         id: data.id,
-        amount: data.amount,
-        quantity: data.quantity
+        amount: data.amount
     };
 
     // const storageData:ProductStorage[] = 
@@ -50,7 +49,7 @@ const ProductCard: React.FC<ProductCard> = ({
 
     const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
         event.stopPropagation();
-        cart.addItem(data);
+        cart.addItem(newStorageItem);
     }
 
     const onLike: MouseEventHandler<HTMLButtonElement> = (event) => {

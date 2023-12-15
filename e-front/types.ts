@@ -17,7 +17,7 @@ export interface Product {
   export interface ProductStorage {
     id:string;
     amount: number;
-    quantity: number;
+    // quantity: number;
   }
   
   export interface Image {

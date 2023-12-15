@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { Minus, Plus, X } from "lucide-react"
-import { Product } from "@/types";
+import { Product, ProductStorage } from "@/types";
 import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import Button from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 interface CartItemProps {
@@ -19,15 +19,33 @@ const CartItem: React.FC<CartItemProps> = ({
 }) => {
 
     const cart = useCart();
-    const [amount, setAmount] = useState(data.amount);
+    console.log(cart.items)
+    console.log(data)
+    const [amount, setAmount] = useState(1);
+
+
+
+
     const onRemove = () => {
         cart.removeItem(data.id);
     }
+
+    
+    useEffect(() => {
+        // Find the item with the matching ID
+        const item = cart.items.find(item => item.id === data.id);
+        
+        // If the item is found, update the amount state
+        if (item) {
+            setAmount(item.amount);
+        }
+    }, [cart.items,data.id]);
+
+
     const onAddToCart = () => {
         // cart.addItem(data);
         const productWithUpdatedQuantity = { ...data, amount };  
         cart.addItem(productWithUpdatedQuantity); 
-
     }
 
     const addQ = () => {

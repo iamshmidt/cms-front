@@ -17,19 +17,20 @@ const Summary = () => {
   const removeAll = useCart((state) => state.removeAll);
 
 
-  useEffect(() => {
-    const fetchAndUpdatePrices = async () => {
-      try {
-        const updatedProducts = await getProducts({});
-        // updatePrices(updatedProducts);
-        console.log('Updated cart items:', updatedProducts)
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAndUpdatePrices = async () => {
+  //     try {
+  //       const updatedProducts = await getProducts({});
+  //       updatePrices(updatedProducts);
+  //       console.log('Updated cart items:', updatedProducts)
+  //     } catch (error) {
+  //       console.error("Error fetching products:", error);
+  //     }
+  //   };
 
-    fetchAndUpdatePrices();
-  }, []);
+  //   fetchAndUpdatePrices();
+  // }, []);
+
 
 
   useEffect(() => {

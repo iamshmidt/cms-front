@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react"
-import { Product } from "@/types";
+import { Product, ProductStorage } from "@/types";
 import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import Button from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import getProduct from "@/actions/get-product";
 
 
@@ -26,22 +26,29 @@ const CartItem: React.FC<CartItemProps> =async ({
     const onRemove = () => {
         cart.removeFromWishlist(data.id);
     }
+    const newStorageItem: ProductStorage = {
+        id: data.id,
+        amount: amount
+    };
+
+    // useEffect(() => {
+    //     // Find the item with the matching ID
+    //     const item = cart.items.find(item => item.id === data.id);
+        
+    //     // If the item is found, update the amount state
+    //     if (item) {
+    //         setAmount(item.amount);
+    //     }
+    // }, [cart.items,data.id]);
+
 // console.log(data)
     // const itemsId = cart.wishlist.map((item) => item.id)
     // console.log(itemsId)
     // console.log(itemsId)
     // const product = await getProduct('39f1fb47-6bd6-4153-8229-122932f9dcd9');
-    const [product, setProduct] = useState(null);
 
-    useEffect(() => {
-        const fetchProduct = async () => {
-            const fetchedProduct = await getProduct('39f1fb47-6bd6-4153-8229-122932f9dcd9');
-            // setProduct(fetchedProduct);
-            console.log(fetchedProduct)
-        };
 
-        fetchProduct();
-    }, []); 
+
     // console.log(cart.wishlist)
     // const onCheckout = async () => {
     //     const response = await await getProduct(params.productId);
@@ -50,15 +57,24 @@ const CartItem: React.FC<CartItemProps> =async ({
     //     // window.location = response.data.url;
     //   }
 
-    const onAddToCart = () => {
-        //   cart.addItem(data);
-        const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
-        cart.addItem(productWithUpdatedQuantity);
+    // const onAddToCart = () => {
+    //     //   cart.addItem(data);
+    //     const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount 
+    //     // const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount 
+    //     console.log(productWithUpdatedQuantity)
+    //     cart.addItem(productWithUpdatedQuantity);
+    // }
+
+    const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.stopPropagation();
+        cart.addItem(newStorageItem);
     }
 
     const addQ = () => {
+        
         setAmount(amount + 1);
     }
+    //39.10 + 21.60
 
     const subtractQ = () => {
         if (amount > 0) {
