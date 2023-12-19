@@ -3,18 +3,21 @@
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react"
-import { Product } from "@/types";
+import { Product, ProductStorage } from "@/types";
 import IcontButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import Button from "@/components/ui/button";
-import { useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
+import getProduct from "@/actions/get-product";
 
 
 interface CartItemProps {
     data: Product;
 }
-const CartItem: React.FC<CartItemProps> = ({
+
+
+const CartItem: React.FC<CartItemProps> =async ({
     data
 }) => {
 
@@ -23,17 +26,22 @@ const CartItem: React.FC<CartItemProps> = ({
     const onRemove = () => {
         cart.removeFromWishlist(data.id);
     }
+    const newStorageItem: ProductStorage = {
+        id: data.id,
+        amount: amount
+    };
 
 
-    const onAddToCart = () => {
-        //   cart.addItem(data);
-        const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
-        cart.addItem(productWithUpdatedQuantity);
+    const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.stopPropagation();
+        cart.addItem(newStorageItem);
     }
 
     const addQ = () => {
+        
         setAmount(amount + 1);
     }
+    //39.10 + 21.60
 
     const subtractQ = () => {
         if (amount > 0) {

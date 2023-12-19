@@ -53,19 +53,28 @@ const DesktopNav: React.FC<MainNavProps> = ({
                             <Link
                                 href={route.href}
                                 onClick={() => console.log('Link clicked', route.href)}
-                                className={cn('text-lg font-medium transition-colors  hover:text-black', 'text-black')}
+                                className={cn(' text-lg font-medium  sm:pl-2 transition-colors hover:text-black', isActive(route.href) ? 'hover:text-black' : 'text-neutral-500')}
                             >
                                 {route.label}
                             </Link>
 
                         </SelectItem>
                     ))}
-                    <Link
+                    {/* <Link
                         href={'/category/all'}
                         className={cn(' text-lg font-medium  sm:pl-2 transition-colors hover:text-black', isActive('/category/all') ? 'hover:text-black' : 'text-neutral-500')}
                     >
                         View All
-                    </Link>
+                    </Link> */}
+                    <SelectItem key="/category/all" value="/category/all">
+                        <Link
+                            href="/category/all"
+                            onClick={() => console.log('Link clicked', '/category/all')}
+                            className={cn('text-lg font-medium sm:pl-2 transition-colors hover:text-black', pathname === '/category/all' ? 'hover:text-black' : 'text-neutral-500')}
+                        >
+                            All Categories
+                        </Link>
+                    </SelectItem>
                 </SelectContent>
             </Select>
 

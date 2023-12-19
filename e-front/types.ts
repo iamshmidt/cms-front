@@ -13,6 +13,12 @@ export interface Product {
     amount: number;
     liked: boolean;
   };
+
+  export interface ProductStorage {
+    id:string;
+    amount: number;
+    // quantity: number;
+  }
   
   export interface Image {
     id: string;
@@ -26,6 +32,7 @@ export interface Product {
   };
   
   export interface Category {
+    id: string;
     billboardId: string;
     name: string;
     billboard: Billboard;

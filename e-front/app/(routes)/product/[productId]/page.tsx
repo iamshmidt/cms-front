@@ -4,6 +4,7 @@ import Gallery from "@/components/gallery";
 import Info from "@/components/info";
 import ProductList from "@/components/products-list";
 import Container from "@/components/ui/container";
+import useCart from "@/hooks/use-cart";
 export const revalidate = 0;
 interface ProductPageProps {
     params:{
@@ -24,7 +25,7 @@ const ProductPage:React.FC<ProductPageProps> = async({
     if (!product) {
       return null;
     }
-  
+
     // const suggestedProducts = await getProducts({categoryId:});
     return ( 
         <div className="bg-white">

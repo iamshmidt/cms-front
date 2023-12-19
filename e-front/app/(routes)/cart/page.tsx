@@ -2,21 +2,22 @@
 
 import Container from "@/components/ui/container";
 import useCart from "@/hooks/use-cart";
-import { useEffect, useState } from "react";
-import CartItem from "./components/cart-item";
+import { useEffect, useMemo, useState } from "react";
 import Summary from "./components/summary";
+import StorageItems from "./components/storage-items";
 
 const CartPage = () => {
 
-    
     const cart = useCart();
+
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
-    },[]);
+    }, []);
 
-    if(!isMounted) return null;
+    if (!isMounted) return null;
+
 
     return ( 
         <div className="bg-white">
@@ -28,7 +29,7 @@ const CartPage = () => {
                         {cart.items.length === 0 && <p className="text-neutral-500">No items added to cart</p>}
                         <ul>
                             {cart.items.map((item) => (
-                                <CartItem key={item.id} data={item}></CartItem>
+                                  <StorageItems key={item.id} data={item}></StorageItems>
                             ))}
                         </ul>
                     </div>
@@ -42,3 +43,4 @@ const CartPage = () => {
 }
  
 export default CartPage;
+

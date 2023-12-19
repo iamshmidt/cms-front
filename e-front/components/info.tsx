@@ -1,11 +1,11 @@
 "use client"
 
-import { Product } from "@/types";
+import { Product, ProductStorage } from "@/types";
 import Currency from "./ui/currency";
 import Button from "./ui/button";
 import { Plus, Minus, ShoppingCart } from "lucide-react";
 import useCart from "@/hooks/use-cart";
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 
 interface InfoProps {
     data: Product;
@@ -17,11 +17,21 @@ const Info: React.FC<InfoProps> = ({
     const [amount, setAmount] = useState(1);
     const cart = useCart();
 
-    const onAddToCart = () => {
-        // cart.addItem(data);
-        const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
-        cart.addItem(productWithUpdatedQuantity);  // Add the product to the cart with updated amount
+    const newStorageItem: ProductStorage = {
+        id: data.id,
+        amount: amount
+    };
 
+
+    // const onAddToCart = () => {
+    //     // cart.addItem(data);
+    //     const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount
+    //     cart.addItem(productWithUpdatedQuantity);  // Add the product to the cart with updated amount
+
+    // }
+    const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+        event.stopPropagation();
+        cart.addItem(newStorageItem);
     }
 
     const addQ = () => {
