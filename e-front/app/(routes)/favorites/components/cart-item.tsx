@@ -31,39 +31,6 @@ const CartItem: React.FC<CartItemProps> =async ({
         amount: amount
     };
 
-    // useEffect(() => {
-    //     // Find the item with the matching ID
-    //     const item = cart.items.find(item => item.id === data.id);
-        
-    //     // If the item is found, update the amount state
-    //     if (item) {
-    //         setAmount(item.amount);
-    //     }
-    // }, [cart.items,data.id]);
-
-// console.log(data)
-    // const itemsId = cart.wishlist.map((item) => item.id)
-    // console.log(itemsId)
-    // console.log(itemsId)
-    // const product = await getProduct('39f1fb47-6bd6-4153-8229-122932f9dcd9');
-
-
-
-    // console.log(cart.wishlist)
-    // const onCheckout = async () => {
-    //     const response = await await getProduct(params.productId);
-
-    
-    //     // window.location = response.data.url;
-    //   }
-
-    // const onAddToCart = () => {
-    //     //   cart.addItem(data);
-    //     const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount 
-    //     // const productWithUpdatedQuantity = { ...data, amount };  // Update the product amount 
-    //     console.log(productWithUpdatedQuantity)
-    //     cart.addItem(productWithUpdatedQuantity);
-    // }
 
     const onAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
         event.stopPropagation();

@@ -18,19 +18,11 @@ const CartPage = () => {
     useEffect(() => {
         setIsMounted(true);
 
-        // const intervalId = setInterval(() => {
-        //     fetchAndUpdateProducts();
-        // }, 60000); // Update every minute, adjust as needed
-
-        // return () => {
-        //     clearInterval(intervalId);
-        // };
     }, []);
 
     // Ensure the component renders null on the server (for SSR)
     if (!isMounted) return null;
     
-// console.log(favorites.wishlist)
 
     return ( 
         <div className="bg-white">
