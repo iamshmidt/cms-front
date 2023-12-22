@@ -78,3 +78,18 @@
 .swiper-button-disabled svg {
   stroke: #c9c8c8; /* Or any color you want */
 }
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animated-in {
+  animation: fadeIn 0.4s forwards;
+  background-color: aquamarine;
+}

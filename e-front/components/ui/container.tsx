@@ -6,7 +6,7 @@ interface ContainerProps {
     children
   }) => {
     return ( 
-      <div className="mx-auto max-w-7xl pt-18">
+      <div className="mx-auto max-w-7xl pt-[200px]">
         {children}
       </div>
      );
