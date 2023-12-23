@@ -23,11 +23,11 @@ const HomePage = async() => {
         <Billboard 
           data={billboardData}
         />
-        
-        <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8 relative">
-            <CategoryCard items={products}></CategoryCard>
+        <CategoryCard items={products}></CategoryCard>
+        {/* <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8 relative"> */}
+            
             {/* <ProductList title="Featured Products" items={products}></ProductList> */}
-        </div>
+        {/* </div> */}
         </div>
        </Container>
        </div>

@@ -93,3 +93,53 @@
   animation: fadeIn 0.4s forwards;
   background-color: aquamarine;
 }
+
+.square {
+  opacity: 0;
+  width: 100%;
+  transform-origin: 0 0;
+  cursor: pointer;
+  background-color: #272c34;
+  color: #fff;
+  
+}
+.container {
+  display: grid;
+  padding: 1rem;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+  list-style-type: none;
+  margin: 0;
+}
+
+.EnterpriseHubHeroCard{
+  /* display: flex;
+  flex-direction: column;
+  grid-column: span 4; */
+  will-change: transform;
+  perspective: 1000px;
+}
+
+.section__container{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.section__layoutContainer{
+  width: 100%;
+  max-width:1080px;
+  /* margin: */
+}
+
+.section__layout {
+  position:relative;
+}
+
+.EnterpriseHubHeroCardFan__content{
+  display: grid;
+    grid: auto / repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    perspective: 1000px;
+}
