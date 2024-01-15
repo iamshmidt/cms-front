@@ -143,3 +143,35 @@
     gap: 24px;
     perspective: 1000px;
 }
+
+#gradient-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: 14px 14px 0px 0px;
+  --gradient-color-1: #b90e50;
+  --gradient-color-2: #032e46;
+  --gradient-color-3: #151525;
+  --gradient-color-4: #0f3b5e;
+}
+
+.card-animation-1 {
+  transform: translateX(1025px) translateY(-713.896px) rotateZ(0deg) scale(1);
+  transition: transform 0.5s ease; /* adjust duration and easing as needed */
+  opacity: 1;
+}
+
+.card-animation-2 {
+  transform: translateX(764.667px) translateY(-649.669px) rotateZ(8.33333deg) scale(0.833333);
+  transition: transform 0.5s ease;
+  opacity: 1;
+}
+
+.card-animation-3 {
+  transform: translateX(511.345px) translateY(-585.442px) rotateZ(16.6667deg) scale(0.666667);
+  transition: transform 0.5s ease;
+  opacity: 1;
+}
