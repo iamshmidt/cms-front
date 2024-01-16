@@ -1,14 +1,22 @@
 "use client"
-import React, { use, useEffect, useRef } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import { Category, Product } from "@/types";
 import Image from "next/image";
 import gsap from 'gsap';
 import { Flipper, Flipped, spring } from 'react-flip-toolkit';
 import { useInView } from 'react-intersection-observer';
+import {motion, useAnimate} from "framer-motion";
 
 interface CategoryProps {
   items: Product[];
   // data: Category[];
+}
+
+interface Animation {
+  translateX: number;
+  translateY: number;
+  rotateZ: number;
+  scale: number;
 }
 
 const CategoryCard: React.FC<CategoryProps> = ({
@@ -17,9 +25,11 @@ const CategoryCard: React.FC<CategoryProps> = ({
   // gsap.registerPlugin(Flip);
   // const containerRef = useRef(null);
   const containerRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentPositions, setCurrentPositions] = useState([]);
 
 
-
+const [scope, animate] = useAnimate()
 
   const offset = 30;
   // Define initial and final positions for the card stack
@@ -31,58 +41,30 @@ const CategoryCard: React.FC<CategoryProps> = ({
 
 
 
-  const shouldFlip = (previousData: any, currentData: any) => {
+  // const shouldFlip = (previousData: any, currentData: any) => {
+  //   // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
+  //   return previousData.id !== currentData.id;
+  // };
+    const shouldFlip = (prev: any, current: any) => {
     // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
-    return previousData.id !== currentData.id;
+      if (prev.type !== current.type) {
+      return true;
+    }
+    return false;
   };
-  // useEffect(() => {
-  //     const container = containerRef.current;
-  //     if (!container) return;
 
-  //     let animations = [
-  //       { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
-  //       { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
-  //       { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
-  //     ];
-
-  //     // Function to update positions
-  //     const updatePositions = () => {
-  //       animations.push(animations.shift()); // Move the first animation to the end
-  //       applyAnimations();
-  //     };
-
-  //     // Recursive function to apply the animation and loop
-  //     const applyAnimations = () => {
-  //       animations.forEach((anim, i) => {
-  //         const el = containerRef.current[i];
-  //         if (el) {
-  //           spring({
-  //             config: "gentle",
-  //             values: {
-  //               translateX: [el.style.translateX || 0, anim.translateX],
-  //               translateY: [el.style.translateY || 0, anim.translateY],
-  //               rotateZ: [el.style.rotateZ || 0, anim.rotateZ],
-  //               scale: [el.style.scale || 1, anim.scale]
-  //             },
-  //             onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-  //               el.style.opacity = '1';
-  //               el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-  //             },
-  //             onComplete: () => {
-  //               if (i === animations.length - 1) {
-  //                 // When the last animation completes, update positions
-  //                 updatePositions();
-  //               }
-  //             },
-  //             delay: i * 150,
-  //           });
-  //         }
-  //       });
-  //     };
-
-  //     // Start the animation loop
-  //     applyAnimations();
-  //   }, [items]); 
+  const shuffleCards = (i: number, translateX:number, translateY:number, translateZ:number, scale:number ) => {
+    console.log(i, 'SHUFFLE')
+    console.log(translateX, 'SHUFFLE')
+    console.log(translateY, 'SHUFFLE')
+    console.log(translateZ, 'SHUFFLE')
+    console.log(scale, 'SHUFFLE')
+    const el = containerRef.current[i];
+    console.log(el)
+  
+    animate("#target-"+i, {x:translateX, y:translateY, z:translateZ, scale:scale, opacity:0})
+  }
+  
 
   useEffect(() => {
     const container = containerRef.current;
@@ -91,78 +73,155 @@ const CategoryCard: React.FC<CategoryProps> = ({
       { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
       { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
     ];
-  
+
     const animateCards = () => {
       animations.forEach((anim, i) => {
         const el = containerRef.current[i];
         if (el) {
           spring({
-            config: "gentle",
+            config: 'gentle',
             values: {
-              translateX: [0, anim.translateX],
-              translateY: [0, anim.translateY],
-              rotateZ: [0, anim.rotateZ],
-              scale: [1, anim.scale]
+              translateX: [currentPositions[i] || 0, anim.translateX],
+              translateY: [currentPositions[i] || 0, anim.translateY],
+              rotateZ: [currentPositions[i] || 0, anim.rotateZ],
+              scale: [currentPositions[i] || 1, anim.scale],
             },
             onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
               el.style.opacity = '1';
               el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+              el.style.top = '40%';
+              el.style.right = '90%';
             },
             onComplete: () => {
-              // if (i === animations.length - 1) {
-              //   // Shift the animations array for the next cycle
-              //   const lastAnim = animations.pop();
-              //   animations = [lastAnim, ...animations];
-              //   animateCards(); // Start the next animation cycle
-              // }
+              const nextIndex = (currentIndex + 1) % animations.length;
+              setCurrentIndex(nextIndex);
+
+              // Store the current positions of the cards
+              const newPositions = animations.map((anim) => ({
+                translateX: anim.translateX,
+                translateY: anim.translateY,
+                rotateZ: anim.rotateZ,
+                scale: anim.scale,
+              }));
+              setCurrentPositions(newPositions);
+              // console.log(newPositions)
+        
+              swapCards(newPositions)
             },
             delay: i * 250,
           });
         }
       });
     };
+
+    animateCards();
+
+    // const swapCards=(newPositions:[]) => {
+    //   // console.log(newPositions, 'SWAP')
+    //   // console.log(translateX, 'SWAP')
+    //   console.log('calling you')
+    //   const el = containerRef.current;
+    //   el.forEach((item, i) => {
+   
+    //     if(i > 0) { // Skip the first item, as there's no previous item for it
+    //       spring({
+    //         config: 'gentle',
+    //         values: {
+    //           translateX: [newPositions[i].translateX, newPositions[i - 1].translateX],
+    //           translateY: [newPositions[i].translateY, newPositions[i - 1].translateY],
+    //           rotateZ: [newPositions[i].rotateZ, newPositions[i - 1].rotateZ],
+    //           scale: [newPositions[i].scale, newPositions[i - 1].scale],
+    //         },
+    //         onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+    //           item.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+              
+    //         },
+    //         onComplete: () => {
+    //          const firstItem = newPositions.shift();
+    //          newPositions.push(firstItem);
+    //          swapCards(newPositions)
+    //         }
+    //       });
+    //     }
+
+    //   });
+      
+    //   // console.log(el)
+    //   // if (el) {
+    //   //   spring({
+    //   //     config: 'wobbly',
+    //   //     values: {
+    //   //       translateX: [currentPositions[currentIndex].translateX, translateX],
+    //   //       translateY: [currentPositions[currentIndex].translateY, translateY],
+    //   //       rotateZ: [currentPositions[currentIndex].rotateZ, rotateZ],
+    //   //       scale: [currentPositions[currentIndex].scale, scale],
+    //   //     },
+    //   //     onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+    //   //       el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+    //   //     },
+    //   //   });
+    //   // }
+    // }
+    let isAnimating = false; // Track if animation is in progress
+    const swapCards = (newPositions) => {
+      const el = containerRef.current;
+    
+      // Create a promise for each animation
+      const animationPromises = [];
+    
+      el.forEach((item, i) => {
+        if (item && i > 0) {
+          animationPromises.push(
+            new Promise((resolve) => {
+              spring({
+                config: 'gentle',
+                values: {
+                  translateX: [newPositions[i - 1].translateX, newPositions[i - 1].translateX],
+                  translateY: [newPositions[i - 1].translateY, newPositions[i - 1].translateY],
+                  rotateZ: [newPositions[i - 1].rotateZ, newPositions[i - 1].rotateZ],
+                  scale: [newPositions[i - 1].scale, newPositions[i - 1].scale],
+                },
+                
+                onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+                  item.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+                },
+                onComplete: () => {
+                  resolve(); // Resolve the promise when the animation completes
+                },
+              });
+            })
+          );
+        }
+      });
+    
+      // Wait for all animations to complete before shifting elements
+      Promise.all(animationPromises).then(() => {
+        const firstItem = newPositions.shift();
+        newPositions.push(firstItem);
+    
+        // Trigger the next iteration of animations
+        swapCards(newPositions);
+      });
+    
+    };
+    
+  }, []);
+
+
   
-    if (containerRef.current) {
-      animateCards();
-    }
-  }, [items]);
   
-  // Start the spring animation
-  // spring({
-  //   config: 'gentle',
-  //     values: {
-  //         opacity: [0, 1], // Starting from invisible to visible
-  //     },
-  //   onUpdate: (value:any) => {
-  //     // Apply the value directly for opacity
-  //     console.log(value)
-  //     el.style.opacity = value.toString();
-  //     // Translate the element based on the value
-  //     const translateY = (1 - value) * -30; // Starting 30px up
-  //     el.style.transform = `translateY(${translateY}px)`;
-  //   },
-  //   delay: i * 150, // Delay each card's animation for a staggered effect
-  // });
-  //   };
+ 
   return (
-    //     <Flipper flipKey="unique-key">
-    //     <ul className="container" ref={containerRef}>
-    //       {Array.from({ length: 40 }, (_, i) => (
-    //         <Flipped key={i} flipId={`square-${i}`} onAppear={() => onAppear}>
-    //           <li className="square" />
-    //         </Flipped>
-    //       ))}
-    //     </ul>
-    //   </Flipper>
+  
     <Flipper flipKey={items.map(item => item.id).join("")}>
-      <div className="section__container">
+      <div className="section__container" ref={scope}>
         <div className="section__layoutContainer">
           <div className="section__layout">
             <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content'  >
               {items.slice(0, 3).map((data, index) => (
 
-                <Flipped flipId={data.id} key={data.id} stagger="card"  >
-                  <div ref={(el) => (containerRef.current[index] = el)}
+                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip} >
+                  <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
                     style={{
                       position: 'relative',
                       // Adjust the top property based on index to stack cards
