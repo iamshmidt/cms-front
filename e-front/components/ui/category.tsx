@@ -5,8 +5,8 @@ import Image from "next/image";
 import gsap from 'gsap';
 import { Flipper, Flipped, spring } from 'react-flip-toolkit';
 import { useInView } from 'react-intersection-observer';
-import {motion, useAnimate} from "framer-motion";
-
+import { motion, useAnimate } from "framer-motion";
+import { useGSAP } from "@gsap/react";
 interface CategoryProps {
   items: Product[];
   // data: Category[];
@@ -29,7 +29,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
   const [currentPositions, setCurrentPositions] = useState([]);
 
 
-const [scope, animate] = useAnimate()
+  const [scope, animate] = useAnimate()
 
   const offset = 30;
   // Define initial and final positions for the card stack
@@ -45,15 +45,15 @@ const [scope, animate] = useAnimate()
   //   // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
   //   return previousData.id !== currentData.id;
   // };
-    const shouldFlip = (prev: any, current: any) => {
+  const shouldFlip = (prev: any, current: any) => {
     // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
-      if (prev.type !== current.type) {
+    if (prev.type !== current.type) {
       return true;
     }
     return false;
   };
 
-  const shuffleCards = (i: number, translateX:number, translateY:number, translateZ:number, scale:number ) => {
+  const shuffleCards = (i: number, translateX: number, translateY: number, translateZ: number, scale: number) => {
     console.log(i, 'SHUFFLE')
     console.log(translateX, 'SHUFFLE')
     console.log(translateY, 'SHUFFLE')
@@ -61,12 +61,12 @@ const [scope, animate] = useAnimate()
     console.log(scale, 'SHUFFLE')
     const el = containerRef.current[i];
     console.log(el)
-  
-    animate("#target-"+i, {x:translateX, y:translateY, z:translateZ, scale:scale, opacity:0})
-  }
-  
 
-  useEffect(() => {
+    animate("#target-" + i, { x: translateX, y: translateY, z: translateZ, scale: scale, opacity: 0 })
+  }
+
+
+  useGSAP(() => {
     const container = containerRef.current;
     let animations = [
       { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
@@ -105,8 +105,10 @@ const [scope, animate] = useAnimate()
               }));
               setCurrentPositions(newPositions);
               // console.log(newPositions)
-        
+
               swapCards(newPositions)
+              // gsap.fromTo( `#target-${nextIndex}`, {y:0}, {y:-100, duration: 1, ease: "power2.inOut"});
+              // gsap.to( `#target-${nextIndex}`, {y:0}); // <-- automatically reverted
             },
             delay: i * 250,
           });
@@ -115,104 +117,68 @@ const [scope, animate] = useAnimate()
     };
 
     animateCards();
+    // x: newPositions[i + 1].translateX,
+    // y: newPositions[i + 1].translateY,
+    // // z: newPositions[i + 1].rotateZ,
+    // rotateZ: newPositions[i + 1].rotateZ,
+    // scale: newPositions[i + 1].scale,
 
-    // const swapCards=(newPositions:[]) => {
-    //   // console.log(newPositions, 'SWAP')
-    //   // console.log(translateX, 'SWAP')
-    //   console.log('calling you')
-    //   const el = containerRef.current;
-    //   el.forEach((item, i) => {
-   
-    //     if(i > 0) { // Skip the first item, as there's no previous item for it
-    //       spring({
-    //         config: 'gentle',
-    //         values: {
-    //           translateX: [newPositions[i].translateX, newPositions[i - 1].translateX],
-    //           translateY: [newPositions[i].translateY, newPositions[i - 1].translateY],
-    //           rotateZ: [newPositions[i].rotateZ, newPositions[i - 1].rotateZ],
-    //           scale: [newPositions[i].scale, newPositions[i - 1].scale],
-    //         },
-    //         onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-    //           item.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-              
-    //         },
-    //         onComplete: () => {
-    //          const firstItem = newPositions.shift();
-    //          newPositions.push(firstItem);
-    //          swapCards(newPositions)
-    //         }
-    //       });
-    //     }
-
-    //   });
-      
-    //   // console.log(el)
-    //   // if (el) {
-    //   //   spring({
-    //   //     config: 'wobbly',
-    //   //     values: {
-    //   //       translateX: [currentPositions[currentIndex].translateX, translateX],
-    //   //       translateY: [currentPositions[currentIndex].translateY, translateY],
-    //   //       rotateZ: [currentPositions[currentIndex].rotateZ, rotateZ],
-    //   //       scale: [currentPositions[currentIndex].scale, scale],
-    //   //     },
-    //   //     onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-    //   //       el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-    //   //     },
-    //   //   });
-    //   // }
-    // }
     let isAnimating = false; // Track if animation is in progress
-    const swapCards = (newPositions) => {
+    const swapCards = (newPositions: []) => {
       const el = containerRef.current;
-    
-      // Create a promise for each animation
-      const animationPromises = [];
-    
+
       el.forEach((item, i) => {
-        if (item && i > 0) {
-          animationPromises.push(
-            new Promise((resolve) => {
-              spring({
-                config: 'gentle',
-                values: {
-                  translateX: [newPositions[i - 1].translateX, newPositions[i - 1].translateX],
-                  translateY: [newPositions[i - 1].translateY, newPositions[i - 1].translateY],
-                  rotateZ: [newPositions[i - 1].rotateZ, newPositions[i - 1].rotateZ],
-                  scale: [newPositions[i - 1].scale, newPositions[i - 1].scale],
-                },
-                
-                onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-                  item.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-                },
-                onComplete: () => {
-                  resolve(); // Resolve the promise when the animation completes
-                },
-              });
-            })
-          );
-        }
+        // Animate each card
+        gsap.to(item, {
+          // opacity: 0,
+          // duration: 4,
+          // delay: i * 0.5,
+          // repeat: -1,
+          // stagger: 0.5,
+
+          onStart: () => {
+            console.log(i, 'start')
+            if(i == 0){
+              gsap.to( `#target-${i}`, {rotateZ: -25,  duration: 1, ease: "power2.inOut", skewX:-11, skewY: 27, x:newPositions[i].translateX - 300, y:newPositions[i].translateY - 50, opacity:0});
+            }
+            if(i == 1){
+              gsap.to( `#target-${i}`, { duration: 1, ease: "power2.inOut",  x:newPositions[i-1].translateX-400, y:newPositions[i-1].translateY - 10, opacity:1, rotateZ: newPositions[i-1].rotateZ, scale: newPositions[i-1].scale});
+            }
+            if(i==2){
+              gsap.to( `#target-${i}`, { duration: 1, ease: "power2.inOut",  x:newPositions[i-1].translateX-400, y:newPositions[i-1].translateY - 10, opacity:1, rotateZ: newPositions[i-1].rotateZ, scale: newPositions[i-1].scale});
+            }
+          },
+          onComplete: () => {
+            // if(i > 0){
+            //   gsap.to( `#target-${i}`, {rotateZ: -25,  duration: 1, ease: "power2.inOut", skewX:-11, skewY: 27, x:newPositions[i].translateX - 300, y:newPositions[i].translateY - 50, opacity:0});
+            // }
+            console.log('completed')
+            // const firstItem = newPositions.shift();
+            // newPositions.push(firstItem);
+            // console.log(newPositions, 'newpositi')
+
+          }
+        })
+
       });
-    
-      // Wait for all animations to complete before shifting elements
-      Promise.all(animationPromises).then(() => {
-        const firstItem = newPositions.shift();
-        newPositions.push(firstItem);
-    
-        // Trigger the next iteration of animations
-        swapCards(newPositions);
-      });
-    
+
+
     };
-    
+
+
   }, []);
 
 
-  
-  
- 
+  // useGSAP(() => {
+  //   // gsap code here...
+  //   console.log('gsap')
+  //   gsap.to( `#target-${1}`, {x: -200}); // <-- automatically reverted
+
+  // });
+
+
   return (
-  
+
     <Flipper flipKey={items.map(item => item.id).join("")}>
       <div className="section__container" ref={scope}>
         <div className="section__layoutContainer">
