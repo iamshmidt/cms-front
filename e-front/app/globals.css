@@ -95,9 +95,9 @@
 }
 
 .square {
-  opacity: 0;
+  /* opacity: 0; */
   width: 100%;
-  transform-origin: 0 0;
+  /* transform-origin: 0 0; */
   cursor: pointer;
   background-color: #272c34;
   color: #fff;
@@ -125,6 +125,7 @@
   z-index: 1;
   display: flex;
   justify-content: center;
+  padding-top: 4rem;
 }
 
 .section__layoutContainer{
@@ -152,10 +153,10 @@
   height: 100%;
   z-index: -1;
   border-radius: 14px 14px 0px 0px;
-  --gradient-color-1: #b90e50;
-  --gradient-color-2: #032e46;
-  --gradient-color-3: #151525;
-  --gradient-color-4: #0f3b5e;
+  --gradient-color-1: #ccfbff;
+  --gradient-color-2: #ef96c5;
+  --gradient-color-3: #f6efa7;
+  --gradient-color-4: #0c7bb3;
 }
 
 .card-animation-1 {

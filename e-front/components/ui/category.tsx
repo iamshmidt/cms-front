@@ -4,11 +4,13 @@ import { Category, Product } from "@/types";
 import Image from "next/image";
 import gsap from 'gsap';
 import { Flipper, Flipped, spring } from 'react-flip-toolkit';
-import { useInView } from 'react-intersection-observer';
-import { motion, useAnimate } from "framer-motion";
+import { motion, useAnimate, useInView, useScroll} from "framer-motion";
 import { useGSAP } from "@gsap/react";
+import { posix } from 'path';
+import getBillboard from '@/actions/get-billboard';
+
 interface CategoryProps {
-  items: Product[];
+  items: Category[];
   // data: Category[];
 }
 
@@ -19,17 +21,67 @@ interface Animation {
   scale: number;
 }
 
+export interface Billboard {
+  // Define the properties of Billboard
+  imageUrl: string;
+};
+
+
 const CategoryCard: React.FC<CategoryProps> = ({
   items
 }) => {
   // gsap.registerPlugin(Flip);
   // const containerRef = useRef(null);
   const containerRef = useRef<(HTMLDivElement | null)[]>([]);
+  const containerMain = useRef<HTMLDivElement[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentPositions, setCurrentPositions] = useState([]);
+  const [inView, setInView] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [updatedCategories, setUpdatedCategories] = useState<Category[]>([]);
+  // const { scrollYProgress } = useScroll();
+  // console.log('scrollYProgress', scrollYProgress)
+  const isInView = useInView(containerMain, { 
+    margin: "-10% 0px", // Adjust the top margin as needed
+    threshold: 0.5 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
+  });
+useEffect(() => {
 
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      let newCategories: Category[] = [];
+      // Fetch categories
+      for (const item of items) {
+        console.log('item', item.billboardId);
+        const fetchedBillboard = await getBillboard(item.billboardId);
+        console.log('fetchedBillboard', fetchedBillboard.imageUrl);
 
-  const [scope, animate] = useAnimate()
+         // Update the item with the imageUrl
+         let newCategory: Category = {
+          ...item,
+          imageUrl: fetchedBillboard.imageUrl
+        };
+
+        newCategories.push(newCategory);
+        // Process or store the fetched billboard data
+      }
+      setUpdatedCategories(newCategories);
+      setLoading(false);
+    }
+      catch (error) {
+        console.error("Error fetching data:", error);
+
+      }
+    }
+    setInView(isInView)
+    fetchData();
+  // console.log("Element is in view: ", isInView)
+  // const billboards = await getBillboard(billboard_id);
+  
+}, [isInView, setInView, items])
+
+console.log(updatedCategories,'updatedCategories')
 
   const offset = 30;
   // Define initial and final positions for the card stack
@@ -39,12 +91,15 @@ const CategoryCard: React.FC<CategoryProps> = ({
     { id: 'card3', translateX: 0, translateY: -100, zIndex: 1 }, // Bottom card
   ];
 
+  const container = containerRef.current;
+  let animations = [
+    { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
+    { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
+    { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
+  ];
 
 
-  // const shouldFlip = (previousData: any, currentData: any) => {
-  //   // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
-  //   return previousData.id !== currentData.id;
-  // };
+
   const shouldFlip = (prev: any, current: any) => {
     // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
     if (prev.type !== current.type) {
@@ -53,26 +108,45 @@ const CategoryCard: React.FC<CategoryProps> = ({
     return false;
   };
 
-  const shuffleCards = (i: number, translateX: number, translateY: number, translateZ: number, scale: number) => {
-    console.log(i, 'SHUFFLE')
-    console.log(translateX, 'SHUFFLE')
-    console.log(translateY, 'SHUFFLE')
-    console.log(translateZ, 'SHUFFLE')
-    console.log(scale, 'SHUFFLE')
-    const el = containerRef.current[i];
-    console.log(el)
+  // useEffect(() => {
+  //   // console.log("Element is in view: ", isInView)
+  // if(isInView){
+  //     animations.forEach((anim, i) => {
+  //       const el = containerRef.current[i];
+  //       if (el) {
+  //         spring({
+  //           config: 'gentle',
+  //           values: {
+  //             translateX:0, translateY:0, rotateZ:0, scale:1
+  //           },
+  //           onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+  //             el.style.opacity = '1';
+  //             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+  //             el.style.top = '40%';
+  //             el.style.right = '90%';
+  //           },
+  //           onComplete: () => {
+  //             const nextIndex = (currentIndex + 1) % animations.length;
+  //             anim = {
+  //               translateX: anim.translateX,
+  //               translateY: anim.translateY,
+  //               rotateZ: anim.rotateZ,
+  //               scale: anim.scale,
+  //             }
+  //             if (i === animations.length - 1) {
+  //               console.log('animateCards complete')
 
-    animate("#target-" + i, { x: translateX, y: translateY, z: translateZ, scale: scale, opacity: 0 })
-  }
+  //             }
+  //           },
+  //           delay: i * 250,
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [isInView])
 
 
   useGSAP(() => {
-    const container = containerRef.current;
-    let animations = [
-      { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
-      { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
-      { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
-    ];
 
     const animateCards = () => {
       animations.forEach((anim, i) => {
@@ -91,24 +165,20 @@ const CategoryCard: React.FC<CategoryProps> = ({
               el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
               el.style.top = '40%';
               el.style.right = '90%';
+
+              // Add transition properties
             },
             onComplete: () => {
-              const nextIndex = (currentIndex + 1) % animations.length;
-              setCurrentIndex(nextIndex);
-
-              // Store the current positions of the cards
-              const newPositions = animations.map((anim) => ({
+              anim = {
                 translateX: anim.translateX,
                 translateY: anim.translateY,
                 rotateZ: anim.rotateZ,
                 scale: anim.scale,
-              }));
-              setCurrentPositions(newPositions);
-              // console.log(newPositions)
+              }
+              if (i === animations.length - 1) {
+                console.log('animateCards complete')
 
-              swapCards(newPositions)
-              // gsap.fromTo( `#target-${nextIndex}`, {y:0}, {y:-100, duration: 1, ease: "power2.inOut"});
-              // gsap.to( `#target-${nextIndex}`, {y:0}); // <-- automatically reverted
+              }
             },
             delay: i * 250,
           });
@@ -116,84 +186,84 @@ const CategoryCard: React.FC<CategoryProps> = ({
       });
     };
 
-    animateCards();
-    // x: newPositions[i + 1].translateX,
-    // y: newPositions[i + 1].translateY,
-    // // z: newPositions[i + 1].rotateZ,
-    // rotateZ: newPositions[i + 1].rotateZ,
-    // scale: newPositions[i + 1].scale,
+    const resetAnimations = () => {
+      animations.forEach((anim, i) => {
+        const el = containerRef.current[i];
+        if (el) {
+          spring({
+            config: 'veryGentle',
+            values: {
+              translateX: [currentPositions[i] || 0, 0],
+              translateY: [currentPositions[i] || 0, 0],
+              rotateZ: [currentPositions[i] || 0, 0],
+              scale: [currentPositions[i] || 1, 1],
+            },
+            onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+         
+              el.style.opacity = '1';
+              el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale}) `;
+              el.style.top = '0';
+              el.style.right = 'unset';
+              // el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            },
+            onComplete: () => {
+              anim = {
+                translateX: anim.translateX,
+                translateY: anim.translateY,
+                rotateZ: anim.rotateZ,
+                scale: anim.scale,
+              }
+              if (i === animations.length - 1) {
+                console.log('animateCards complete')
 
-    let isAnimating = false; // Track if animation is in progress
-    const swapCards = (newPositions: []) => {
-      const el = containerRef.current;
-
-      el.forEach((item, i) => {
-        // Animate each card
-        gsap.to(item, {
-          // opacity: 0,
-          // duration: 4,
-          // delay: i * 0.5,
-          // repeat: -1,
-          // stagger: 0.5,
-
-          onStart: () => {
-            console.log(i, 'start')
-            if(i == 0){
-              gsap.to( `#target-${i}`, {rotateZ: -25,  duration: 1, ease: "power2.inOut", skewX:-11, skewY: 27, x:newPositions[i].translateX - 300, y:newPositions[i].translateY - 50, opacity:0});
-            }
-            if(i == 1){
-              gsap.to( `#target-${i}`, { duration: 1, ease: "power2.inOut",  x:newPositions[i-1].translateX-400, y:newPositions[i-1].translateY - 10, opacity:1, rotateZ: newPositions[i-1].rotateZ, scale: newPositions[i-1].scale});
-            }
-            if(i==2){
-              gsap.to( `#target-${i}`, { duration: 1, ease: "power2.inOut",  x:newPositions[i-1].translateX-400, y:newPositions[i-1].translateY - 10, opacity:1, rotateZ: newPositions[i-1].rotateZ, scale: newPositions[i-1].scale});
-            }
-          },
-          onComplete: () => {
-            // if(i > 0){
-            //   gsap.to( `#target-${i}`, {rotateZ: -25,  duration: 1, ease: "power2.inOut", skewX:-11, skewY: 27, x:newPositions[i].translateX - 300, y:newPositions[i].translateY - 50, opacity:0});
-            // }
-            console.log('completed')
-            // const firstItem = newPositions.shift();
-            // newPositions.push(firstItem);
-            // console.log(newPositions, 'newpositi')
-
-          }
-        })
-
+              }
+            },
+            delay: i * 250,
+          });
+        }
       });
 
-
-    };
-
-
-  }, []);
+    }
 
 
-  // useGSAP(() => {
-  //   // gsap code here...
-  //   console.log('gsap')
-  //   gsap.to( `#target-${1}`, {x: -200}); // <-- automatically reverted
 
-  // });
+    if(!isInView ){
+      console.log('not in the view')
+      animateCards();
+    }else {
+      console.log('is it in view?')
+      resetAnimations()
+    }
+   
+
+  
+  }, [isInView ]);
+
+
 
 
   return (
 
-    <Flipper flipKey={items.map(item => item.id).join("")}>
-      <div className="section__container" ref={scope}>
+    <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
+      <div className="section__container">
         <div className="section__layoutContainer">
-          <div className="section__layout">
-            <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content'  >
-              {items.slice(0, 3).map((data, index) => (
+          <div className="section__layout"  ref={el => {
+      // Update the ref to point to the current element
+      if (el && !containerMain.current.includes(el)) {
+        containerMain.current.push(el);
+      }
+    }} >
+            <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content' >
+              {updatedCategories.slice(0, 3).map((data, index) => (
 
-                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip} >
+                <Flipped flipId={data.id} key={data.id}    stagger="card" shouldInvert={shouldFlip}>
                   <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
                     style={{
                       position: 'relative',
                       // Adjust the top property based on index to stack cards
-                      top: `${index * -30}px`,
+                      // top: `${index * -30}px`,
                       //   left: '50%',
-                      transform: 'translate(-50%, 0)',
+                      // transform: 'translate(-50%, 0)',
                       width: '300px',
                       zIndex: 3 - index, // Ensure correct stacking order
                     }}
@@ -201,7 +271,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
                     <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4">
                       <div className="aspect-square rounded-xl bg-gray-100 relative">
                         {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
-                        <Image src={data?.images?.[0]?.url} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
+                        <Image src={data?.imageUrl} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
 
 
                         <div className="absolute w-full px-6 top-5">

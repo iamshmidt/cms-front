@@ -8,6 +8,7 @@ const Canvas = () => {
     useLayoutEffect(() => {
         const gradient = new Gradient()
         gradient.initGradient('#gradient-canvas')
+        console.log('loading gradient',  gradient)
       }, [])
   return (
     <Main>
@@ -35,12 +36,14 @@ const Canvas = () => {
 }
 
 export default Canvas
+
 const Main = styled.main`
   position: relative;
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
+  height:calc(100vh - 80px);
+  margin-top: 50px;
   @media only screen and (max-width: 1200px) {
     flex-direction: column;
   }
@@ -108,7 +111,7 @@ const Content = styled.div`
   padding-left: 4em;
 
   h2 {
-    color: #f7057e;
+    color: #f48eb3;
     font-size: 4rem;
     margin-top: 1.2em;
     padding: 0;
