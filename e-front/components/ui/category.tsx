@@ -4,10 +4,11 @@ import { Category, Product } from "@/types";
 import Image from "next/image";
 import gsap from 'gsap';
 import { Flipper, Flipped, spring } from 'react-flip-toolkit';
-import { motion, useAnimate, useInView, useScroll} from "framer-motion";
+import { motion, useAnimate, useInView, useScroll } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import { posix } from 'path';
 import getBillboard from '@/actions/get-billboard';
+import { IoIosArrowForward } from "react-icons/io";
 
 interface CategoryProps {
   items: Category[];
@@ -41,34 +42,32 @@ const CategoryCard: React.FC<CategoryProps> = ({
   const [updatedCategories, setUpdatedCategories] = useState<Category[]>([]);
   // const { scrollYProgress } = useScroll();
   // console.log('scrollYProgress', scrollYProgress)
-  const isInView = useInView(containerMain, { 
+  const isInView = useInView(containerMain, {
     margin: "-10% 0px", // Adjust the top margin as needed
     threshold: 0.5 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
   });
-useEffect(() => {
+  useEffect(() => {
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      let newCategories: Category[] = [];
-      // Fetch categories
-      for (const item of items) {
-        console.log('item', item.billboardId);
-        const fetchedBillboard = await getBillboard(item.billboardId);
-        console.log('fetchedBillboard', fetchedBillboard.imageUrl);
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        let newCategories: Category[] = [];
+        // Fetch categories
+        for (const item of items) {
+          const fetchedBillboard = await getBillboard(item.billboardId);
 
-         // Update the item with the imageUrl
-         let newCategory: Category = {
-          ...item,
-          imageUrl: fetchedBillboard.imageUrl
-        };
+          // Update the item with the imageUrl
+          let newCategory: Category = {
+            ...item,
+            imageUrl: fetchedBillboard.imageUrl
+          };
 
-        newCategories.push(newCategory);
-        // Process or store the fetched billboard data
+          newCategories.push(newCategory);
+          // Process or store the fetched billboard data
+        }
+        setUpdatedCategories(newCategories);
+        setLoading(false);
       }
-      setUpdatedCategories(newCategories);
-      setLoading(false);
-    }
       catch (error) {
         console.error("Error fetching data:", error);
 
@@ -76,12 +75,11 @@ useEffect(() => {
     }
     setInView(isInView)
     fetchData();
-  // console.log("Element is in view: ", isInView)
-  // const billboards = await getBillboard(billboard_id);
-  
-}, [isInView, setInView, items])
+    // console.log("Element is in view: ", isInView)
+    // const billboards = await getBillboard(billboard_id);
 
-console.log(updatedCategories,'updatedCategories')
+  }, [isInView, setInView, items])
+
 
   const offset = 30;
   // Define initial and final positions for the card stack
@@ -148,6 +146,9 @@ console.log(updatedCategories,'updatedCategories')
 
   useGSAP(() => {
 
+    console.log(loading, 'loading')
+  
+
     const animateCards = () => {
       animations.forEach((anim, i) => {
         const el = containerRef.current[i];
@@ -163,8 +164,8 @@ console.log(updatedCategories,'updatedCategories')
             onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
               el.style.opacity = '1';
               el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-              el.style.top = '40%';
-              el.style.right = '90%';
+              el.style.top = '0%';
+              el.style.right = '115%';
 
               // Add transition properties
             },
@@ -199,7 +200,7 @@ console.log(updatedCategories,'updatedCategories')
               scale: [currentPositions[i] || 1, 1],
             },
             onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-         
+
               el.style.opacity = '1';
               el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale}) `;
               el.style.top = '0';
@@ -225,19 +226,27 @@ console.log(updatedCategories,'updatedCategories')
 
     }
 
-
-
-    if(!isInView ){
+    if(loading){
+      animateCards()
+    } else if (isInView) {
+      console.log('in the view')
+      resetAnimations()
+    } else{
       console.log('not in the view')
       animateCards();
-    }else {
-      console.log('is it in view?')
-      resetAnimations()
     }
-   
 
-  
-  }, [isInView ]);
+    // if (!isInView) {
+    //   console.log('not in the view')
+    //   animateCards();
+    // } else {
+    //   console.log('is it in view?')
+    //   resetAnimations()
+    // }
+
+
+
+  }, [isInView]);
 
 
 
@@ -247,16 +256,16 @@ console.log(updatedCategories,'updatedCategories')
     <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
       <div className="section__container">
         <div className="section__layoutContainer">
-          <div className="section__layout"  ref={el => {
-      // Update the ref to point to the current element
-      if (el && !containerMain.current.includes(el)) {
-        containerMain.current.push(el);
-      }
-    }} >
+          <div className="section__layout" ref={el => {
+            // Update the ref to point to the current element
+            if (el && !containerMain.current.includes(el)) {
+              containerMain.current.push(el);
+            }
+          }} >
             <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content' >
               {updatedCategories.slice(0, 3).map((data, index) => (
 
-                <Flipped flipId={data.id} key={data.id}    stagger="card" shouldInvert={shouldFlip}>
+                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip}>
                   <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
                     style={{
                       position: 'relative',
@@ -267,9 +276,9 @@ console.log(updatedCategories,'updatedCategories')
                       width: '300px',
                       zIndex: 3 - index, // Ensure correct stacking order
                     }}
-                    className="EnterpriseHubHeroCard square bg-white rounded-xl shadow-xl overflow-hidden mb-10">
-                    <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4">
-                      <div className="aspect-square rounded-xl bg-gray-100 relative">
+                    className="EnterpriseHubHeroCard accentBorder square bg-white rounded-xl shadow-xl overflow-hidden mb-10 ">
+                    <div className="bg-white group cursor-pointer rounded-top-xl border p-3 space-y-4 ">
+                      <div className="aspect-square rounded-xl bg-gray-100 relative AccentedCard__shadow">
                         {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
                         <Image src={data?.imageUrl} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
 
@@ -279,23 +288,34 @@ console.log(updatedCategories,'updatedCategories')
                         </div>
                         <div className="lg:opacity-0 sm:opacity-1 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
                           <div className="flex gap-x-6 justify-center">
-
-
                           </div>
                         </div>
                       </div>
                       {/* Description */}
                       <div className="">
-                        <p className="font-semibold text-lg">
+                        <p className="font-semibold text-lg text-slate-900 uppercase">
                           {data.name}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          {data?.category?.name}
-                        </p>
+                        {/* <Link></Link> */}
+                        <div className="">
+                        <div className="flex text-s text-gray-500 items-center">
+                          {/* {data?.category?.name} */}
+                          <span className="text-[#0c7bb3]">Learn More </span><div>
+                          <svg className="HoverArrow" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                            <g fillRule="evenodd">
+
+                              <path className="HoverArrow__linePath" d="M0 5h7"></path>
+                              <path className="HoverArrow__tipPath" d="M1 1l4 4-4 4"></path>
+
+                            </g>
+                          </svg>
+                          </div> 
+                          </div>
+                        </div>
                       </div>
                       {/* Price */}
                       <div className="flex items-center justify-between">
-
+                        <h1>hello</h1>
                       </div>
                     </div>
                   </div>

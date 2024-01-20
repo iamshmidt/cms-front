@@ -1,37 +1,40 @@
 "use client";
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import CanvasIntro from './canvas-intro';
 import styled from 'styled-components'
 import { Gradient } from '../gradient';
 
 const Canvas = () => {
-    useLayoutEffect(() => {
-        const gradient = new Gradient()
-        gradient.initGradient('#gradient-canvas')
-        console.log('loading gradient',  gradient)
-      }, [])
+  const [isLoading, setLoading] = useState(true);
+  useLayoutEffect(() => {
+    const gradient = new Gradient()
+    const x = gradient.initGradient('#gradient-canvas')
+    // console.log('loading gradient', gradient)
+    
+    setLoading(false);
+  }, [])
   return (
     <Main>
-    <canvas id="gradient-canvas" data-transition-in />
-    <Menu>
-      {/* <Logo color="#f7057e" /> */}
-      <div>
-        <p>SECRET TEACHINGS OF ALL AGES</p>
-        <p>30/11/22</p>
-      </div>
-    </Menu>
-    <ContentContainer>
-      <Content>
-        <p>MODUS OPERANDI FOR THE INVOCATION OF SPIRITS</p>
-        <h2>The Invocation—</h2>
-        <h1>Behold the sign and the very Hallowed Names of God full of power. Obey the power of this our pentacle;</h1>
-        <h3>The Complete Book of Magic Science</h3>
-      </Content>
-    </ContentContainer>
-    <CanvasContainer>
-      <CanvasIntro />
-    </CanvasContainer>
-  </Main>
+      <canvas id="gradient-canvas" data-transition-in className="min-h-[600px] bg-[#ffd9d9]" />
+      <Menu>
+        {/* <Logo color="#f7057e" /> */}
+        <div>
+          <p>SECRET TEACHINGS OF ALL AGES {isLoading}</p>
+          <p>30/11/22</p>
+        </div>
+      </Menu>
+      <ContentContainer>
+        <Content>
+          <p>MODUS OPERANDI FOR THE INVOCATION OF SPIRITS</p>
+          <h2>The Invocation—</h2>
+          <h1>Behold the sign and the very Hallowed Names of God full of power. Obey the power of this our pentacle;</h1>
+          <h3>The Complete Book of Magic Science</h3>
+        </Content>
+      </ContentContainer>
+      <CanvasContainer>
+        <CanvasIntro />
+      </CanvasContainer>
+    </Main>
   )
 }
 
