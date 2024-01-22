@@ -1,25 +1,39 @@
 "use client";
-import React, { useLayoutEffect, useState } from 'react'
+import React, { Suspense, useLayoutEffect, useState, useEffect } from 'react'
 import CanvasIntro from './canvas-intro';
 import styled from 'styled-components'
 import { Gradient } from '../gradient';
+import Loader from "@/components/loader";
 
 const Canvas = () => {
-  const [isLoading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   useLayoutEffect(() => {
     const gradient = new Gradient()
     const x = gradient.initGradient('#gradient-canvas')
     // console.log('loading gradient', gradient)
-    
-    setLoading(false);
+    // setLoading(false);
   }, [])
+
+  useEffect(() => {
+    // Set a timeout for 3 seconds
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    // Clear the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  console.log('loading', loading)
   return (
+
+      
     <Main>
-      <canvas id="gradient-canvas" data-transition-in className="min-h-[600px] bg-[#ffd9d9]" />
+      <canvas id="gradient-canvas" data-transition-in className="" />
       <Menu>
         {/* <Logo color="#f7057e" /> */}
         <div>
-          <p>SECRET TEACHINGS OF ALL AGES {isLoading}</p>
+          <p>SECRET TEACHINGS OF ALL AGES</p>
           <p>30/11/22</p>
         </div>
       </Menu>

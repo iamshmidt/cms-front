@@ -46,6 +46,8 @@ const CategoryCard: React.FC<CategoryProps> = ({
     margin: "-10% 0px", // Adjust the top margin as needed
     threshold: 0.5 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
   });
+
+  
   useEffect(() => {
 
     const fetchData = async () => {
@@ -143,106 +145,94 @@ const CategoryCard: React.FC<CategoryProps> = ({
   //   }
   // }, [isInView])
 
+  const animateCards = () => {
+    animations.forEach((anim, i) => {
+      const el = containerRef.current[i];
+      if (el) {
+        spring({
+          config: 'gentle',
+          values: {
+            translateX: [currentPositions[i] || 0, anim.translateX],
+            translateY: [currentPositions[i] || 0, anim.translateY],
+            rotateZ: [currentPositions[i] || 0, anim.rotateZ],
+            scale: [currentPositions[i] || 1, anim.scale],
+          },
+          onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+            el.style.opacity = '1';
+            el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+            el.style.top = '0%';
+            el.style.right = '115%';
+            el.style.transition = 'unset'; 
 
+            // Add transition properties
+          },
+          onComplete: () => {
+            // el.style.transition = 'transform 0 ease'; 
+            anim = {
+              translateX: anim.translateX,
+              translateY: anim.translateY,
+              rotateZ: anim.rotateZ,
+              scale: anim.scale,
+            }
+          },
+          delay: i * 250,
+        });
+      }
+    });
+  };
+
+  const resetAnimations = () => {
+    animations.forEach((anim, i) => {
+      const el = containerRef.current[i];
+      
+      if (el) {
+        spring({
+          config: 'gentle',
+          values: {
+            translateX: [currentPositions[i] || 0, 0],
+            translateY: [currentPositions[i] || 0, 0],
+            rotateZ: [currentPositions[i] || 0, 0],
+            scale: [currentPositions[i] || 1, 1],
+          },
+          onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+
+            el.style.opacity = '1';
+            el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale}) `;
+            el.style.top = '0';
+            el.style.right = 'unset';
+
+            el.style.transition = 'transform 0.5s'; 
+          },
+          onComplete: () => {
+            // el.style.transition = 'transform 0 '; 
+            anim = {
+              translateX: anim.translateX,
+              translateY: anim.translateY,
+              rotateZ: anim.rotateZ,
+              scale: anim.scale,
+            }
+            if (i === animations.length - 1) {
+              console.log('animateCards complete')
+
+            }
+          },
+          delay: i * 250,
+        });
+      }
+    });
+  }
   useGSAP(() => {
 
-    console.log(loading, 'loading')
-  
 
-    const animateCards = () => {
-      animations.forEach((anim, i) => {
-        const el = containerRef.current[i];
-        if (el) {
-          spring({
-            config: 'gentle',
-            values: {
-              translateX: [currentPositions[i] || 0, anim.translateX],
-              translateY: [currentPositions[i] || 0, anim.translateY],
-              rotateZ: [currentPositions[i] || 0, anim.rotateZ],
-              scale: [currentPositions[i] || 1, anim.scale],
-            },
-            onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-              el.style.opacity = '1';
-              el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-              el.style.top = '0%';
-              el.style.right = '115%';
 
-              // Add transition properties
-            },
-            onComplete: () => {
-              anim = {
-                translateX: anim.translateX,
-                translateY: anim.translateY,
-                rotateZ: anim.rotateZ,
-                scale: anim.scale,
-              }
-              if (i === animations.length - 1) {
-                console.log('animateCards complete')
 
-              }
-            },
-            delay: i * 250,
-          });
-        }
-      });
-    };
-
-    const resetAnimations = () => {
-      animations.forEach((anim, i) => {
-        const el = containerRef.current[i];
-        if (el) {
-          spring({
-            config: 'veryGentle',
-            values: {
-              translateX: [currentPositions[i] || 0, 0],
-              translateY: [currentPositions[i] || 0, 0],
-              rotateZ: [currentPositions[i] || 0, 0],
-              scale: [currentPositions[i] || 1, 1],
-            },
-            onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-
-              el.style.opacity = '1';
-              el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale}) `;
-              el.style.top = '0';
-              el.style.right = 'unset';
-              // el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-            },
-            onComplete: () => {
-              anim = {
-                translateX: anim.translateX,
-                translateY: anim.translateY,
-                rotateZ: anim.rotateZ,
-                scale: anim.scale,
-              }
-              if (i === animations.length - 1) {
-                console.log('animateCards complete')
-
-              }
-            },
-            delay: i * 250,
-          });
-        }
-      });
-
-    }
-
-    if(loading){
-      animateCards()
-    } else if (isInView) {
-      console.log('in the view')
-      resetAnimations()
-    } else{
+    if (!isInView) {
       console.log('not in the view')
       animateCards();
+    } else {
+      console.log('is it in view?')
+      resetAnimations()
     }
-
-    // if (!isInView) {
-    //   console.log('not in the view')
-    //   animateCards();
-    // } else {
-    //   console.log('is it in view?')
-    //   resetAnimations()
-    // }
 
 
 
@@ -265,7 +255,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
             <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content' >
               {updatedCategories.slice(0, 3).map((data, index) => (
 
-                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip}>
+                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip} >
                   <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
                     style={{
                       position: 'relative',

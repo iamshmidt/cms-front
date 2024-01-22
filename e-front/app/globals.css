@@ -159,9 +159,10 @@
   /* display: flex;
   flex-direction: column;
   grid-column: span 4; */
-  will-change: transform;
+  /* will-change: transform; */
   perspective: 1000px;
 }
+
 
 .section__container{
   position: relative;

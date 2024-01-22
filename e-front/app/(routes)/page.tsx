@@ -8,6 +8,8 @@ import CanvasIntro from "@/components/ui/canvas-intro";
 import CategoryCard from "@/components/ui/category";
 // import Category from "@/components/ui/category";
 import Container from "@/components/ui/container";
+import { Suspense } from "react";
+import Loading from "../loading";
 // import styled from 'styled-components'
 
 
@@ -25,7 +27,8 @@ const HomePage = async () => {
 
   const billboardData = billboard;
   return (
-    <div>  <Canvas></Canvas>
+    <div> 
+       <Canvas></Canvas>
       <Container>
 
         {/* <Billboard 
