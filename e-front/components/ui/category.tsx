@@ -44,106 +44,40 @@ const CategoryCard: React.FC<CategoryProps> = ({
   // console.log('scrollYProgress', scrollYProgress)
   const isInView = useInView(containerMain, {
     margin: "-10% 0px", // Adjust the top margin as needed
-    threshold: 0.5 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
+    threshold: 0.4 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
   });
 
-  
-  useEffect(() => {
+  console.log(isInView, 'in view')
 
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        let newCategories: Category[] = [];
-        // Fetch categories
-        for (const item of items) {
-          const fetchedBillboard = await getBillboard(item.billboardId);
-
-          // Update the item with the imageUrl
-          let newCategory: Category = {
-            ...item,
-            imageUrl: fetchedBillboard.imageUrl
-          };
-
-          newCategories.push(newCategory);
-          // Process or store the fetched billboard data
-        }
-        setUpdatedCategories(newCategories);
-        setLoading(false);
-      }
-      catch (error) {
-        console.error("Error fetching data:", error);
-
-      }
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
+  // Scroll event handler
+  const onScroll = () => {
+    let currentScrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScrollPos > lastScrollTop) {
+      // Scrolling down
+      console.log('Scrolling down');
+      // setInView(true)
+setScrollDirection('down')
+    } else {
+      // Scrolling up
+      // setInView(false)
+      console.log('Scrolling up');
+      setScrollDirection('up')
     }
-    setInView(isInView)
-    fetchData();
-    // console.log("Element is in view: ", isInView)
-    // const billboards = await getBillboard(billboard_id);
-
-  }, [isInView, setInView, items])
-
-
-  const offset = 30;
-  // Define initial and final positions for the card stack
-  const cardStack = [
-    { id: 'card1', translateX: 0, translateY: 0, zIndex: 3 }, // Top card
-    { id: 'card2', translateX: 0, translateY: -50, zIndex: 2 },
-    { id: 'card3', translateX: 0, translateY: -100, zIndex: 1 }, // Bottom card
-  ];
-
-  const container = containerRef.current;
-  let animations = [
-    { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
-    { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
-    { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
-  ];
-
-
-
-  const shouldFlip = (prev: any, current: any) => {
-    // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
-    if (prev.type !== current.type) {
-      return true;
-    }
-    return false;
+    // Set the new scroll position
+    setLastScrollTop(currentScrollPos <= 0 ? 0 : currentScrollPos); // For Mobile or negative scrolling
   };
 
-  // useEffect(() => {
-  //   // console.log("Element is in view: ", isInView)
-  // if(isInView){
-  //     animations.forEach((anim, i) => {
-  //       const el = containerRef.current[i];
-  //       if (el) {
-  //         spring({
-  //           config: 'gentle',
-  //           values: {
-  //             translateX:0, translateY:0, rotateZ:0, scale:1
-  //           },
-  //           onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-  //             el.style.opacity = '1';
-  //             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-  //             el.style.top = '40%';
-  //             el.style.right = '90%';
-  //           },
-  //           onComplete: () => {
-  //             const nextIndex = (currentIndex + 1) % animations.length;
-  //             anim = {
-  //               translateX: anim.translateX,
-  //               translateY: anim.translateY,
-  //               rotateZ: anim.rotateZ,
-  //               scale: anim.scale,
-  //             }
-  //             if (i === animations.length - 1) {
-  //               console.log('animateCards complete')
-
-  //             }
-  //           },
-  //           delay: i * 250,
-  //         });
-  //       }
-  //     });
-  //   }
-  // }, [isInView])
+  useEffect(() => {
+    // Add scroll event listener when the component is mounted
+    window.addEventListener('scroll', onScroll);
+    
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [lastScrollTop]);
 
   const animateCards = () => {
     animations.forEach((anim, i) => {
@@ -220,19 +154,124 @@ const CategoryCard: React.FC<CategoryProps> = ({
         });
       }
     });
+
+    // setInView(false)
   }
-  useGSAP(() => {
+  useEffect(() => {
 
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        let newCategories: Category[] = [];
+        // Fetch categories
+        for (const item of items) {
+          const fetchedBillboard = await getBillboard(item.billboardId);
 
+          // Update the item with the imageUrl
+          let newCategory: Category = {
+            ...item,
+            imageUrl: fetchedBillboard.imageUrl
+          };
 
+          newCategories.push(newCategory);
+          // Process or store the fetched billboard data
+        }
+        setUpdatedCategories(newCategories);
+        setLoading(false);
+      }
+      catch (error) {
+        console.error("Error fetching data:", error);
 
-    if (!isInView) {
+      }
+    }
+
+    // setInView(isInView)
+    fetchData();
+    // console.log("Element is in view: ", isInView)
+    // const billboards = await getBillboard(billboard_id);
+    if (!isInView && scrollDirection === 'up') {
       console.log('not in the view')
       animateCards();
     } else {
       console.log('is it in view?')
       resetAnimations()
     }
+
+  }, [isInView, setInView, items])
+
+
+  const offset = 30;
+  // Define initial and final positions for the card stack
+  const cardStack = [
+    { id: 'card1', translateX: 0, translateY: 0, zIndex: 3 }, // Top card
+    { id: 'card2', translateX: 0, translateY: -50, zIndex: 2 },
+    { id: 'card3', translateX: 0, translateY: -100, zIndex: 1 }, // Bottom card
+  ];
+
+  const container = containerRef.current;
+  let animations = [
+    { translateX: 1025, translateY: -713.896, rotateZ: 0, scale: 1 },
+    { translateX: 764.667, translateY: -649.669, rotateZ: 8.33333, scale: 0.833333 },
+    { translateX: 511.345, translateY: -585.442, rotateZ: 16.6667, scale: 0.666667 },
+  ];
+
+
+
+  const shouldFlip = (prev: any, current: any) => {
+    // Example logic: flip if the IDs are different (you'll need to replace this with your actual logic)
+    if (prev.type !== current.type) {
+      return true;
+    }
+    return false;
+  };
+
+  // useEffect(() => {
+  //   // console.log("Element is in view: ", isInView)
+  // if(isInView){
+  //     animations.forEach((anim, i) => {
+  //       const el = containerRef.current[i];
+  //       if (el) {
+  //         spring({
+  //           config: 'gentle',
+  //           values: {
+  //             translateX:0, translateY:0, rotateZ:0, scale:1
+  //           },
+  //           onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
+  //             el.style.opacity = '1';
+  //             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+  //             el.style.top = '40%';
+  //             el.style.right = '90%';
+  //           },
+  //           onComplete: () => {
+  //             const nextIndex = (currentIndex + 1) % animations.length;
+  //             anim = {
+  //               translateX: anim.translateX,
+  //               translateY: anim.translateY,
+  //               rotateZ: anim.rotateZ,
+  //               scale: anim.scale,
+  //             }
+  //             if (i === animations.length - 1) {
+  //               console.log('animateCards complete')
+
+  //             }
+  //           },
+  //           delay: i * 250,
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [isInView])
+
+
+
+
+
+  useGSAP(() => {
+
+
+
+
+
 
 
 

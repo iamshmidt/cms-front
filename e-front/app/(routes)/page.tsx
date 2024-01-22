@@ -17,6 +17,7 @@ import {
 import { faq } from "@/lib/data";
 import { Suspense } from "react";
 import Loading from "../loading";
+import TextContainer from "@/components/text-container";
 // import styled from 'styled-components'
 
 
@@ -44,10 +45,13 @@ const HomePage = async () => {
         {/* <canvas id="gradient-canvas" data-transition-in /> */}
 
         <CategoryCard items={categories}></CategoryCard>
+  
+
+        <TextContainer></TextContainer>
         <div className="space-y-10 pb-10">
           {/* <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8 relative"> */}
 
-          {/* <ProductList title="Featured Products" items={products}></ProductList> */}
+          <ProductList title="Featured Products" items={products}></ProductList>
           {/* </div> */}
         </div>
         <Accordion type="single" collapsible className="w-full">
