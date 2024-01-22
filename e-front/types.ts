@@ -36,6 +36,7 @@ export interface Product {
     billboardId: string;
     name: string;
     billboard: Billboard;
+    imageUrl?: string;
   };
   
   export interface Size {
