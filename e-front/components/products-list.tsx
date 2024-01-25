@@ -24,16 +24,17 @@ const ProductList: React.FC<ProductListProps> = ({
     items
 }) => {
     const containerRef = useRef(null);
-     const context = useContext(CursorContext);
+    //  const context = useContext(CursorContext);
     // if (!context) {
     //     throw new Error('MyComponent must be used within a CursorContextProvider');
     // }
     // const { position, setPosition } = context;
-console.log('position', context)
-//       const [position, setPosition] = useState({
-//     clientX: 0,
-//     clientY: 0,
-//   });
+// console.log('position', context)
+      const [position, setPosition] = useState({
+    clientX: 0,
+    clientY: 0,
+    inView: false,
+  });
     // const { clientX, clientY } = useMousePosition(containerRef);
 //   useEffect(() => {
 //     // Check if the ref is currently pointing to a node
@@ -51,7 +52,8 @@ console.log('position', context)
 //       const clientY = event.clientY - top;
 
 //       setPosition({ clientX, clientY });
-//     })[containerRef]
+//     };
+
 
     useEffect(() => {
         const containerElement_ = containerRef.current;
@@ -60,10 +62,24 @@ console.log('position', context)
           // If not, return a function that does nothing
           return () => {};
         }
-        const { left, top } = containerElement_.getBoundingClientRect();
-    }, [containerRef]);
+        const updatePosition = (event:MouseEvent) => {
+                const { left, top } = containerElement_.getBoundingClientRect();
+      const clientX = event.clientX - (left-100);
+      const clientY = event.clientY - (top-400);
+
+      setPosition({ clientX, clientY, inView: true});
+    };
+
+        containerElement_.addEventListener('mousemove', updatePosition, false);
+
+        return () => {
+          containerElement_.removeEventListener('mousemove', updatePosition);
+        };
+    }, [containerRef, setPosition]);
     // console.log('clientX', clientX)
     // console.log('clientY', clientY)
+//OUTOF VIEW = RESET POSITION
+    console.log('position', position)
     return (
         <Container>
            
@@ -105,7 +121,7 @@ console.log('position', context)
                         onSlideChange={() => console.log('slide change')}
                         onSwiper={(swiper) => console.log(swiper)}
                     > 
-                        {/* <Cursor /> */}
+                        <Cursor positions={position} />
                        
                         {items.slice(0, 10).map((item) => (
                             <SwiperSlide key={item.id}>

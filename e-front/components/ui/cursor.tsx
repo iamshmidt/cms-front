@@ -3,13 +3,20 @@
 import React, { useContext } from "react";
 import useMousePosition from "@/hooks/use-mouse-position";
 import { CursorContext } from "@/context/cursor-context";
-const Cursor = () => {
-  const { clientX, clientY } = useMousePosition();
-  const context = useContext(CursorContext);
-  if (!context) {
-    throw new Error('MyComponent must be used within a CursorContextProvider');
-  }
-  console.log('context', context);
+type PositionProps = {
+    positions: {
+        clientX: number;
+        clientY: number;
+        inView: boolean;
+    };
+};
+const Cursor:React.FC<PositionProps> = ({ positions }) => {
+    const {clientX, clientY, inView} = positions;
+//   const { clientX, clientY } = useMousePosition();
+//   const context = useContext(CursorContext);
+//   if (!context) {
+//     throw new Error('MyComponent must be used within a CursorContextProvider');
+//   }
   return (
     <div 
       style={{ 
@@ -30,11 +37,16 @@ const Cursor = () => {
           position: "absolute",
           left: clientX,
           top: clientY,
-          transform: `translate(-50%, -50%) scale(${cursor.active ? 2.5 : 1})`,
-          stroke: cursor.active ? "black" : "white",
+          transform: `translate(-50%, -50%) scale(${inView ? 2.5 : 1})`,
+          stroke: inView ? "black" : "white",
           strokeWidth: 1,
-          fill: cursor.active ? "rgba(255,255,255,.5)" : "black",
+          fill: inView ? "rgba(255,255,255,.5)" : "black",
           transition: "transform .2s ease-in-out",
+        //   transform: `translate(-50%, -50%) scale(${cursor.active ? 2.5 : 1})`,
+        //   stroke: cursor.active ? "black" : "white",
+        //   strokeWidth: 1,
+        //   fill: cursor.active ? "rgba(255,255,255,.5)" : "black",
+        //   transition: "transform .2s ease-in-out",
         }}
       >
         <circle
