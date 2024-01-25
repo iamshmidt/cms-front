@@ -35,9 +35,10 @@ const HomePage = async () => {
 
   const billboardData = billboard;
   return (
+    
     <div> 
        <Canvas></Canvas>
-      <Container>
+      {/* <Container> */}
 
         {/* <Billboard 
           data={billboardData}
@@ -64,7 +65,7 @@ const HomePage = async () => {
         ))}
   
     </Accordion>
-       </Container>
+       {/* </Container> */}
        </div>
      );
 }

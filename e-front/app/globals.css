@@ -118,9 +118,17 @@
   }
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* cursor: none !important; */
+}
+
 .swiper-button-disabled svg {
   stroke: #c9c8c8; /* Or any color you want */
 }
+
 
 @keyframes fadeIn {
   0% {
@@ -203,6 +211,7 @@
   --gradient-color-4: #cabeef;
   --gradient-color-1: #ccfbff; */
   /* --gradient-color-2: #ef96c5; */
+  --gradient-color-1: #d5edf9;
   --gradient-color-2: #ef96c5;
   --gradient-color-3: #ffd9d9;
   --gradient-color-4: #0c7bb3;
@@ -283,3 +292,52 @@ linear-gradient(91.53deg, #9966FF 0%, #FF5996 100%);
 .EnterpriseHubHeroCard:hover{
   box-shadow: 0px 100px 60px -40px rgba(0,0,0,0.1), 0px 60px 100px 0px rgba(50,50,93,0.25);
 }
+
+.pink-border {
+  border: 2px solid;
+  border-radius: 50px;
+  white-space: nowrap;
+  padding: 0 16px;
+  border-color: #ed6798;
+  display: inline-flex;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap');
+
+
+
+.cursor{
+  z-index: 999;
+  position: fixed;
+  background: #2696E8;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 20px #2696E8,
+              0 0 60px #2696E8,
+              0 0 100px #2696E8;
+  animation: colors 5s infinite;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+@keyframes colors{
+  0%{
+    filter: hue-rotate(0deg);
+  }
+  100%{
+    filter: hue-rotate(360deg);
+  }
+}
+
+.cursor:before{
+  content: '';
+  position: absolute;
+  background: #2696E8;
+  width: 50px;
+  height: 50px;
+  opacity: 0.2;
+  transform: translate(-30%, -30%);
+  border-radius: 50%;
+}
+      

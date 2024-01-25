@@ -9,6 +9,7 @@ import { useGSAP } from "@gsap/react";
 import { posix } from 'path';
 import getBillboard from '@/actions/get-billboard';
 import { IoIosArrowForward } from "react-icons/io";
+import Container from './container';
 
 interface CategoryProps {
   items: Category[];
@@ -281,7 +282,7 @@ setScrollDirection('down')
 
 
   return (
-
+<Container>
     <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
       <div className="section__container">
         <div className="section__layoutContainer">
@@ -357,6 +358,7 @@ setScrollDirection('down')
         </div>
       </div>
     </Flipper>
+    </Container>
   )
 }
 
