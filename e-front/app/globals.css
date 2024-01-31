@@ -129,7 +129,9 @@
   stroke: #c9c8c8; /* Or any color you want */
 }
 
-
+html {
+  --cursor-color: #3e7ef6;
+}
 @keyframes fadeIn {
   0% {
     opacity: 0;
