@@ -130,7 +130,7 @@
 }
 
 html {
-  --cursor-color: #3e7ef6;
+  /* --cursor-color: #3e7ef6; */
 }
 @keyframes fadeIn {
   0% {

@@ -12,7 +12,6 @@ import Container from "./ui/container";
 import Cursor from "./ui/cursor";
 import useMousePosition from "@/hooks/use-mouse-position";
 import { useContext, useEffect, useRef, useState } from "react";
-import CursorContextProvider, { CursorContext } from "@/context/cursor-context";
 import AnimatedCursor from "react-animated-cursor"
 interface ProductListProps {
     title: string;
@@ -25,77 +24,14 @@ const ProductList: React.FC<ProductListProps> = ({
 }) => {
     const containerRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
-    //  const context = useContext(CursorContext);
-    // if (!context) {
-    //     throw new Error('MyComponent must be used within a CursorContextProvider');
-    // }
-    // const { position, setPosition } = context;
-// console.log('position', context)
-    useEffect(() => {
-        // Function to reset cursor style
-        const resetCursor = () => {
-            document.body.style.cursor = 'auto'; // Reset to the default cursor
-        };
 
-        if (!isHovered) {
-            resetCursor();
-        }
-
-        // Clean up function to reset cursor when component unmounts or when cursor is not hovered
-        return () => {
-            resetCursor();
-        };
-    }, [isHovered]);
+  
       const [position, setPosition] = useState({
     clientX: 0,
     clientY: 0,
     inView: false,
   });
-    // const { clientX, clientY } = useMousePosition(containerRef);
-//   useEffect(() => {
-//     // Check if the ref is currently pointing to a node
-//     const containerElement = containerRef.current;
-    
-//     if (!containerElement) {
-//       // If not, return a function that does nothing
-//       return () => {};
-//     }
 
-//     // Define the event listener
-//     const updatePosition = (event:MouseEvent) => {
-//       const { left, top } = containerElement.getBoundingClientRect();
-//       const clientX = event.clientX - left;
-//       const clientY = event.clientY - top;
-
-//       setPosition({ clientX, clientY });
-//     };
-
-
-//     useEffect(() => {
-//         const containerElement_ = containerRef.current;
-    
-//         if (!containerElement_) {
-//           // If not, return a function that does nothing
-//           return () => {};
-//         }
-//         const updatePosition = (event:MouseEvent) => {
-//                 const { left, top } = containerElement_.getBoundingClientRect();
-//       const clientX = event.clientX - (left-100);
-//       const clientY = event.clientY - (top-400);
-
-//       setPosition({ clientX, clientY, inView: true});
-//     };
-
-//         containerElement_.addEventListener('mousemove', updatePosition, false);
-
-//         return () => {
-//           containerElement_.removeEventListener('mousemove', updatePosition);
-//         };
-//     }, [containerRef, setPosition]);
-//     // console.log('clientX', clientX)
-//     // console.log('clientY', clientY)
-// //OUTOF VIEW = RESET POSITION
-//     console.log('position', position)
     return (
         <Container>
              <div
@@ -103,7 +39,7 @@ const ProductList: React.FC<ProductListProps> = ({
             onMouseLeave={() => setIsHovered(false)}
             style={{ position: 'relative' }} // Ensure your component has a positioning context
         >
-          {isHovered && (
+          {/* {isHovered && (
                 <AnimatedCursor
                     innerSize={200}
                     outerSize={0}
@@ -130,7 +66,7 @@ const ProductList: React.FC<ProductListProps> = ({
                         zIndex: -1,
                     }}
                 />
-            )}
+            )} */}
            {/* <CursorContextProvider> */}
                 <div className="space-y-4" ref={containerRef}>
                     <h3 className="font-bold text-3xl">{title}</h3>
