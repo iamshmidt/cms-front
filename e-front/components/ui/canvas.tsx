@@ -1,12 +1,14 @@
 "use client";
-import React, { Suspense, useLayoutEffect, useState, useEffect } from 'react'
+import React, { Suspense, useLayoutEffect, useState, useEffect, useRef } from 'react'
 import CanvasIntro from './canvas-intro';
 import styled from 'styled-components'
 import { Gradient } from '../gradient';
 import Loader from "@/components/loader";
+import CategoryCard from './category';
 
 const Canvas = () => {
   const [loading, setLoading] = useState(true);
+  const sectionCards = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const gradient = new Gradient()
     const x = gradient.initGradient('#gradient-canvas')
@@ -24,7 +26,7 @@ const Canvas = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  console.log('loading', loading)
+  console.log(loading, 'loading')
   return (
 
       
@@ -45,6 +47,7 @@ const Canvas = () => {
           <h3>The Complete Book of Magic Science</h3>
         </Content>
       </ContentContainer>
+        <CategoryCard loadingCanvas={loading}></CategoryCard>
       <CanvasContainer>
         <CanvasIntro />
       </CanvasContainer>

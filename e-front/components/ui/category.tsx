@@ -12,7 +12,8 @@ import { IoIosArrowForward } from "react-icons/io";
 import Container from './container';
 
 interface CategoryProps {
-  items: Category[];
+  items?: Category[];
+  loadingCanvas?: boolean;
   // data: Category[];
 }
 
@@ -30,7 +31,8 @@ export interface Billboard {
 
 
 const CategoryCard: React.FC<CategoryProps> = ({
-  items
+  items,
+  loadingCanvas
 }) => {
   // gsap.registerPlugin(Flip);
   // const containerRef = useRef(null);
@@ -40,6 +42,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
   const [currentPositions, setCurrentPositions] = useState([]);
   const [inView, setInView] = useState(true);
   const [loading, setLoading] = useState(true);
+  const[initLoading, setInitLoading] = useState(true)
   const [updatedCategories, setUpdatedCategories] = useState<Category[]>([]);
   // const { scrollYProgress } = useScroll();
   // console.log('scrollYProgress', scrollYProgress)
@@ -47,8 +50,6 @@ const CategoryCard: React.FC<CategoryProps> = ({
     margin: "-10% 0px", // Adjust the top margin as needed
     threshold: 0.4 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
   });
-
-  console.log(isInView, 'in view')
 
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
@@ -59,7 +60,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
       // Scrolling down
       console.log('Scrolling down');
       // setInView(true)
-setScrollDirection('down')
+      setScrollDirection('down')
     } else {
       // Scrolling up
       // setInView(false)
@@ -73,7 +74,7 @@ setScrollDirection('down')
   useEffect(() => {
     // Add scroll event listener when the component is mounted
     window.addEventListener('scroll', onScroll);
-    
+
     // Clean up the event listener when the component is unmounted
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -81,6 +82,9 @@ setScrollDirection('down')
   }, [lastScrollTop]);
 
   const animateCards = () => {
+
+    console.log('calling.......')
+    console.log(containerRef, 'containerRef')
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
       if (el) {
@@ -97,7 +101,7 @@ setScrollDirection('down')
             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
             el.style.top = '0%';
             el.style.right = '115%';
-            el.style.transition = 'unset'; 
+            el.style.transition = 'unset';
 
             // Add transition properties
           },
@@ -119,7 +123,7 @@ setScrollDirection('down')
   const resetAnimations = () => {
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
-      
+
       if (el) {
         spring({
           config: 'gentle',
@@ -136,7 +140,7 @@ setScrollDirection('down')
             el.style.top = '0';
             el.style.right = 'unset';
 
-            el.style.transition = 'transform 0.5s'; 
+            el.style.transition = 'transform 0.5s';
           },
           onComplete: () => {
             // el.style.transition = 'transform 0 '; 
@@ -158,8 +162,9 @@ setScrollDirection('down')
 
     // setInView(false)
   }
-  useEffect(() => {
 
+
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
@@ -178,27 +183,48 @@ setScrollDirection('down')
           // Process or store the fetched billboard data
         }
         setUpdatedCategories(newCategories);
-        setLoading(false);
+       
       }
       catch (error) {
         console.error("Error fetching data:", error);
 
+      } finally{
+        setLoading(false);
+        console.log('inView....', isInView)
+        if(!loadingCanvas){
+
+          animateCards();
+          setInitLoading(false)
+        }
       }
     }
 
     // setInView(isInView)
     fetchData();
-    // console.log("Element is in view: ", isInView)
-    // const billboards = await getBillboard(billboard_id);
-    if (!isInView && scrollDirection === 'up') {
-      console.log('not in the view')
-      animateCards();
-    } else {
-      console.log('is it in view?')
-      resetAnimations()
-    }
 
-  }, [isInView, setInView, items])
+    // if (!isInView && scrollDirection === 'up' && !initLoading) {
+    //   console.log('not in the view')
+    //   animateCards();
+    // } else {
+    //   console.log('is it in view?')
+    //   resetAnimations()
+    // }
+
+
+  }, [items]);
+
+  useEffect(() => {
+    // This block is for subsequent checks after the initial load
+    if (!initLoading) { // Ensure this block doesn't interfere with the initial animation
+      if (!isInView && scrollDirection === 'up') {
+        console.log('Not in the view, animate cards again');
+        animateCards();
+      } else {
+        console.log('In view, reset animations');
+        resetAnimations();
+      }
+    }
+  }, [isInView, scrollDirection, initLoading]); 
 
 
   const offset = 30;
@@ -226,55 +252,10 @@ setScrollDirection('down')
     return false;
   };
 
-  // useEffect(() => {
-  //   // console.log("Element is in view: ", isInView)
-  // if(isInView){
-  //     animations.forEach((anim, i) => {
-  //       const el = containerRef.current[i];
-  //       if (el) {
-  //         spring({
-  //           config: 'gentle',
-  //           values: {
-  //             translateX:0, translateY:0, rotateZ:0, scale:1
-  //           },
-  //           onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-  //             el.style.opacity = '1';
-  //             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
-  //             el.style.top = '40%';
-  //             el.style.right = '90%';
-  //           },
-  //           onComplete: () => {
-  //             const nextIndex = (currentIndex + 1) % animations.length;
-  //             anim = {
-  //               translateX: anim.translateX,
-  //               translateY: anim.translateY,
-  //               rotateZ: anim.rotateZ,
-  //               scale: anim.scale,
-  //             }
-  //             if (i === animations.length - 1) {
-  //               console.log('animateCards complete')
-
-  //             }
-  //           },
-  //           delay: i * 250,
-  //         });
-  //       }
-  //     });
-  //   }
-  // }, [isInView])
-
-
 
 
 
   useGSAP(() => {
-
-
-
-
-
-
-
 
   }, [isInView]);
 
@@ -282,82 +263,82 @@ setScrollDirection('down')
 
 
   return (
-<Container>
-    <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
-      <div className="section__container">
-        <div className="section__layoutContainer">
-          <div className="section__layout" ref={el => {
-            // Update the ref to point to the current element
-            if (el && !containerMain.current.includes(el)) {
-              containerMain.current.push(el);
-            }
-          }} >
-            <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content' >
-              {updatedCategories.slice(0, 3).map((data, index) => (
+    <Container>
+      <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
+        <div className="section__container">
+          <div className="section__layoutContainer">
+            <div className="section__layout" ref={el => {
+              // Update the ref to point to the current element
+              if (el && !containerMain.current.includes(el)) {
+                containerMain.current.push(el);
+              }
+            }} >
+              <div className='grid grid-cols-3 gap-2 relative EnterpriseHubHeroCardFan__content' >
+                {updatedCategories.slice(0, 3).map((data, index) => (
 
-                <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip} >
-                  <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
-                    style={{
-                      position: 'relative',
-                      // Adjust the top property based on index to stack cards
-                      // top: `${index * -30}px`,
-                      //   left: '50%',
-                      // transform: 'translate(-50%, 0)',
-                      width: '300px',
-                      zIndex: 3 - index, // Ensure correct stacking order
-                    }}
-                    className="EnterpriseHubHeroCard square bg-white  shadow-xl overflow-hidden mb-10 ">
-                    <div className="bg-white group cursor-pointer rounded-top-xl border p-3 space-y-4 ">
-                      <div className="aspect-square  bg-gray-100 relative AccentedCard__shadow">
-                        {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
-                        <Image src={data?.imageUrl} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
+                  <Flipped flipId={data.id} key={data.id} stagger="card" shouldInvert={shouldFlip} >
+                    <div ref={(el) => (containerRef.current[index] = el)} id={`target-${index}`}
+                      style={{
+                        position: 'relative',
+                        // Adjust the top property based on index to stack cards
+                        // top: `${index * -30}px`,
+                        //   left: '50%',
+                        // transform: 'translate(-50%, 0)',
+                        width: '300px',
+                        zIndex: 3 - index, // Ensure correct stacking order
+                      }}
+                      className="EnterpriseHubHeroCard square bg-white  shadow-xl overflow-hidden mb-10 ">
+                      <div className="bg-white group cursor-pointer rounded-top-xl border p-3 space-y-4 ">
+                        <div className="aspect-square  bg-gray-100 relative AccentedCard__shadow">
+                          {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
+                          <Image src={data?.imageUrl} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
 
 
-                        <div className="absolute w-full px-6 top-5">
+                          <div className="absolute w-full px-6 top-5">
 
-                        </div>
-                        <div className="lg:opacity-0 sm:opacity-1 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
-                          <div className="flex gap-x-6 justify-center">
+                          </div>
+                          <div className="lg:opacity-0 sm:opacity-1 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
+                            <div className="flex gap-x-6 justify-center">
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      {/* Description */}
-                      <div className="">
-                        <p className="font-semibold text-lg text-slate-900 uppercase">
-                          {data.name}
-                        </p>
-                        {/* <Link></Link> */}
+                        {/* Description */}
                         <div className="">
-                        <div className="flex text-s text-gray-500 items-center">
-                          {/* {data?.category?.name} */}
-                          <span className="text-[#0c7bb3]">Learn More </span><div>
-                          <svg className="HoverArrow" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-                            <g fillRule="evenodd">
+                          <p className="font-semibold text-lg text-slate-900 uppercase">
+                            {data.name}
+                          </p>
+                          {/* <Link></Link> */}
+                          <div className="">
+                            <div className="flex text-s text-gray-500 items-center">
+                              {/* {data?.category?.name} */}
+                              <span className="text-[#0c7bb3]">Learn More </span><div>
+                                <svg className="HoverArrow" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                                  <g fillRule="evenodd">
 
-                              <path className="HoverArrow__linePath" d="M0 5h7"></path>
-                              <path className="HoverArrow__tipPath" d="M1 1l4 4-4 4"></path>
+                                    <path className="HoverArrow__linePath" d="M0 5h7"></path>
+                                    <path className="HoverArrow__tipPath" d="M1 1l4 4-4 4"></path>
 
-                            </g>
-                          </svg>
-                          </div> 
+                                  </g>
+                                </svg>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      {/* Price */}
-                      <div className="flex items-center justify-between">
-                        <h1>hello</h1>
+                        {/* Price */}
+                        <div className="flex items-center justify-between">
+                          <h1>hello</h1>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Flipped>
+                  </Flipped>
 
-              ))}
+                ))}
+              </div>
+
             </div>
-
           </div>
         </div>
-      </div>
-    </Flipper>
+      </Flipper>
     </Container>
   )
 }
