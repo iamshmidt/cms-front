@@ -306,9 +306,9 @@ setScrollDirection('down')
                       width: '300px',
                       zIndex: 3 - index, // Ensure correct stacking order
                     }}
-                    className="EnterpriseHubHeroCard accentBorder square bg-white rounded-xl shadow-xl overflow-hidden mb-10 ">
+                    className="EnterpriseHubHeroCard square bg-white  shadow-xl overflow-hidden mb-10 ">
                     <div className="bg-white group cursor-pointer rounded-top-xl border p-3 space-y-4 ">
-                      <div className="aspect-square rounded-xl bg-gray-100 relative AccentedCard__shadow">
+                      <div className="aspect-square  bg-gray-100 relative AccentedCard__shadow">
                         {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
                         <Image src={data?.imageUrl} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
 

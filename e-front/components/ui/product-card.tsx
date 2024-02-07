@@ -70,9 +70,9 @@ const ProductCard: React.FC<ProductCard> = ({
     return (
         <div onClick={handleClick} className="bg-transparent group cursor-pointer rounded-xl border p-3 space-y-4">
            
-            <div className="aspect-square rounded-xl bg-blue-300 backdrop-blur-sm bg-opacity-10  relative">
+            <div className="aspect-square rounded-xl bg-blue-300 backdrop-blur-sm bg-opacity-10  ">
                 {/* <Image src={data?.images?.[0]?.url} fill alt='image' className="max-h-full"></Image> */}
-                <Image src={data?.images?.[0]?.url} layout="fill" objectFit="cover" alt='image' className="absolute top-0 left-0 w-full h-full"></Image>
+                <Image src={data?.images?.[0]?.url} layout="fill" objectFit="cover" alt='image' className="transition-transform transform hover:scale-110 absolute top-0 left-0 w-full h-full"></Image>
 
 
                 <div className="absolute w-full px-6 top-5">
