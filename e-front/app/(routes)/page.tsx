@@ -35,9 +35,10 @@ const HomePage = async () => {
 
   const billboardData = billboard;
   return (
+    
     <div> 
        <Canvas></Canvas>
-      <Container>
+      {/* <Container> */}
 
         {/* <Billboard 
           data={billboardData}
@@ -54,10 +55,10 @@ const HomePage = async () => {
           <ProductList title="Featured Products" items={products}></ProductList>
           {/* </div> */}
         </div>
-        <Accordion type="single" collapsible className="w-full">
+        <Container> <Accordion type="single" collapsible className="w-full">
         {faq.map((link, id) => (
           <AccordionItem key={id} value={`item-${id}`}>
-            <AccordionTrigger><div className="flex gap-1"> <span className="font-lg">{link.icon}</span>{link.title}</div></AccordionTrigger>
+            <AccordionTrigger><div className="flex gap-1 font-noto"> <span className="text-[30px]">{link.icon}</span>{link.title}</div></AccordionTrigger>
             <AccordionContent>{link.description}</AccordionContent>
           </AccordionItem>
         
