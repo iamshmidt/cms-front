@@ -38,18 +38,31 @@ const CategoryCard: React.FC<CategoryProps> = ({
   // const containerRef = useRef(null);
   const containerRef = useRef<(HTMLDivElement | null)[]>([]);
   const containerMain = useRef<HTMLDivElement[]>([]);
+  const emptyContainer = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentPositions, setCurrentPositions] = useState([]);
-  const [inView, setInView] = useState(true);
+  const [windowWidth, setWindowWidth] = useState<number>(()=>{
+    if (typeof window !== 'undefined') {
+      return window.innerWidth;
+    }
+    return 0;
+  
+  });
   const [loading, setLoading] = useState(true);
-  const[initLoading, setInitLoading] = useState(true)
+  const [initLoading, setInitLoading] = useState(true)
+  const [stopAnimation, setStopAnimation] = useState(false);
   const [updatedCategories, setUpdatedCategories] = useState<Category[]>([]);
   // const { scrollYProgress } = useScroll();
   // console.log('scrollYProgress', scrollYProgress)
   const isInView = useInView(containerMain, {
-    margin: "-10% 0px", // Adjust the top margin as needed
-    threshold: 0.4 // Adjust the threshold as needed, 0.5 means 50% of the element must be visible
+    threshold: 0.9// Adjust the threshold as needed, 0.5 means 50% of the element must be visible
   });
+  const isInViewTop = useInView(emptyContainer, {
+    margin: '100px 0px',
+    threshold: 0.2// Adjust the threshold as needed, 0.5 means 50% of the element must be visible
+  });
+  // Adjust the top margin as needed
+
 
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
@@ -82,9 +95,7 @@ const CategoryCard: React.FC<CategoryProps> = ({
   }, [lastScrollTop]);
 
   const animateCards = () => {
-
-    console.log('calling.......')
-    console.log(containerRef, 'containerRef')
+    setStopAnimation(true);
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
       if (el) {
@@ -102,11 +113,9 @@ const CategoryCard: React.FC<CategoryProps> = ({
             el.style.top = '0%';
             el.style.right = '115%';
             el.style.transition = 'unset';
-
-            // Add transition properties
           },
           onComplete: () => {
-            // el.style.transition = 'transform 0 ease'; 
+            
             anim = {
               translateX: anim.translateX,
               translateY: anim.translateY,
@@ -119,11 +128,10 @@ const CategoryCard: React.FC<CategoryProps> = ({
       }
     });
   };
-
+  
   const resetAnimations = () => {
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
-
       if (el) {
         spring({
           config: 'gentle',
@@ -134,16 +142,14 @@ const CategoryCard: React.FC<CategoryProps> = ({
             scale: [currentPositions[i] || 1, 1],
           },
           onUpdate: ({ translateX, translateY, rotateZ, scale }) => {
-
             el.style.opacity = '1';
             el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale}) `;
             el.style.top = '0';
             el.style.right = 'unset';
-
             el.style.transition = 'transform 0.5s';
           },
           onComplete: () => {
-            // el.style.transition = 'transform 0 '; 
+           
             anim = {
               translateX: anim.translateX,
               translateY: anim.translateY,
@@ -151,81 +157,64 @@ const CategoryCard: React.FC<CategoryProps> = ({
               scale: anim.scale,
             }
             if (i === animations.length - 1) {
-              console.log('animateCards complete')
-
+              console.log('animateCards complete');
             }
           },
           delay: i * 250,
         });
       }
     });
-
-    // setInView(false)
-  }
-
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
         let newCategories: Category[] = [];
-        // Fetch categories
         for (const item of items) {
           const fetchedBillboard = await getBillboard(item.billboardId);
-
-          // Update the item with the imageUrl
           let newCategory: Category = {
             ...item,
             imageUrl: fetchedBillboard.imageUrl
           };
-
           newCategories.push(newCategory);
-          // Process or store the fetched billboard data
         }
         setUpdatedCategories(newCategories);
-       
       }
       catch (error) {
         console.error("Error fetching data:", error);
-
-      } finally{
+      } finally {
         setLoading(false);
-        console.log('inView....', isInView)
-        if(!loadingCanvas){
-
+        if (!loadingCanvas &&  windowWidth > 1220) {
           animateCards();
-          setInitLoading(false)
+          setInitLoading(false);
         }
       }
     }
-
-    // setInView(isInView)
     fetchData();
-
-    // if (!isInView && scrollDirection === 'up' && !initLoading) {
-    //   console.log('not in the view')
-    //   animateCards();
-    // } else {
-    //   console.log('is it in view?')
-    //   resetAnimations()
-    // }
-
-
-  }, [items]);
-
+  }, [items, windowWidth]);
+  
   useEffect(() => {
-    // This block is for subsequent checks after the initial load
-    if (!initLoading) { // Ensure this block doesn't interfere with the initial animation
-      if (!isInView && scrollDirection === 'up') {
-        console.log('Not in the view, animate cards again');
-        animateCards();
-      } else {
-        console.log('In view, reset animations');
+    if (!initLoading && windowWidth > 1220) {
+      if( isInView && isInViewTop&&scrollDirection === 'down') {
         resetAnimations();
+      } else if(!isInView&&isInViewTop && scrollDirection === 'up'){
+animateCards();
       }
     }
-  }, [isInView, scrollDirection, initLoading]); 
+  }, [isInView, scrollDirection, stopAnimation, isInViewTop, windowWidth]);
 
+  useEffect(() => {
+    const handleResize = (): void => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const offset = 30;
   // Define initial and final positions for the card stack
@@ -255,15 +244,16 @@ const CategoryCard: React.FC<CategoryProps> = ({
 
 
 
-  useGSAP(() => {
+  // useGSAP(() => {
 
-  }, [isInView]);
+  // }, [isInView]);
 
 
 
 
   return (
     <Container>
+      <div className=""ref={emptyContainer}></div>
       <Flipper flipKey={updatedCategories.map(item => item.id).join("")}>
         <div className="section__container">
           <div className="section__layoutContainer">

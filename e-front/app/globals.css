@@ -131,6 +131,7 @@
 
 html {
   /* --cursor-color: #3e7ef6; */
+  overflow-x: hidden;
 }
 .hover-3 {
   display: inline-flex;
@@ -179,7 +180,9 @@ html {
     opacity: 1;
   }
 }
-
+.disable-scroll {
+  overflow: hidden;
+}
 .animated-in {
   animation: fadeIn 0.4s forwards;
   background-color: aquamarine;
@@ -235,6 +238,7 @@ html {
     grid: auto / repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     perspective: 1000px;
+    justify-items: center;
 }
 
 #gradient-canvas {

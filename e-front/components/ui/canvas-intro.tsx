@@ -29,7 +29,7 @@ const CanvasIntro = () => {
     // Set a timeout for 3 seconds
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 1000);
 
     // Clear the timer when the component unmounts
     return () => clearTimeout(timer);

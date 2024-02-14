@@ -3,7 +3,6 @@ import React, { Suspense, useLayoutEffect, useState, useEffect, useRef } from 'r
 import CanvasIntro from './canvas-intro';
 import styled from 'styled-components'
 import { Gradient } from '../gradient';
-import Loader from "@/components/loader";
 import CategoryCard from './category';
 
 const Canvas = () => {
@@ -26,9 +25,7 @@ const Canvas = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  console.log(loading, 'loading')
   return (
-
       
     <Main>
       <canvas id="gradient-canvas" data-transition-in className="" />
@@ -66,6 +63,10 @@ const Main = styled.main`
   margin-top: 50px;
   @media only screen and (max-width: 1200px) {
     flex-direction: column;
+  }
+  @media only screen and (max-width: 800px) {
+    flex-direction: column;
+    height:600px
   }
 `
 

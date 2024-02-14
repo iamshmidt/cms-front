@@ -1,8 +1,18 @@
 'use client';
 
+import { useEffect } from "react";
 import { PuffLoader } from "react-spinners";
 
 const LoaderFull = () => {
+  useEffect(() => {
+    // Add class to body to disable scrollbar
+    document.body.classList.add('disable-scroll');
+
+    return () => {
+      // Remove class from body when component is unmounted
+      document.body.classList.remove('disable-scroll');
+    };
+  }, []);
   return (
     <div
     className="
