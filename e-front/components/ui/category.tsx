@@ -71,13 +71,11 @@ const CategoryCard: React.FC<CategoryProps> = ({
     let currentScrollPos = document.documentElement.scrollTop || document.body.scrollTop;
     if (currentScrollPos > lastScrollTop) {
       // Scrolling down
-      console.log('Scrolling down');
       // setInView(true)
       setScrollDirection('down')
     } else {
       // Scrolling up
       // setInView(false)
-      console.log('Scrolling up');
       setScrollDirection('up')
     }
     // Set the new scroll position
@@ -96,6 +94,12 @@ const CategoryCard: React.FC<CategoryProps> = ({
 
   const animateCards = () => {
     setStopAnimation(true);
+if(containerMain){
+  containerMain.current.forEach((el) => {
+    el.style.height = '50px';
+    el.style.transition = 'height 0.5s ease-in';
+  })
+}
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
       if (el) {
@@ -130,6 +134,12 @@ const CategoryCard: React.FC<CategoryProps> = ({
   };
   
   const resetAnimations = () => {
+    if(containerMain){
+      containerMain.current.forEach((el) => {
+        el.style.height = '400px';
+        el.style.transition = 'height 0.6s ease-out 0.3';
+      })
+    }
     animations.forEach((anim, i) => {
       const el = containerRef.current[i];
       if (el) {

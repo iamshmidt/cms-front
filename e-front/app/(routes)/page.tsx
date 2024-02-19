@@ -58,7 +58,7 @@ const HomePage = async () => {
         <Container> <Accordion type="single" collapsible className="w-full">
         {faq.map((link, id) => (
           <AccordionItem key={id} value={`item-${id}`}>
-            <AccordionTrigger><div className="flex gap-1 font-noto"> <span className="text-[30px]">{link.icon}</span>{link.title}</div></AccordionTrigger>
+            <AccordionTrigger><div className="flex gap-1 font-noto"> <span className="flex items-center pr-1 text-[20px]  lg:text-[30px]">{link.icon}</span>{link.title}</div></AccordionTrigger>
             <AccordionContent>{link.description}</AccordionContent>
           </AccordionItem>
         
